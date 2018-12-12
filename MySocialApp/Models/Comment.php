@@ -61,4 +61,33 @@ class Comment extends Base {
     public function setPhoto($photo) {
         $this->photo = $photo;
     }
+
+    /**
+     * @param \MySocialApp\Models\CommentPost $commentPost
+     * @return Comment|Error|null
+     */
+    public function replyBack($commentPost) {
+        if ($this->_session !== null && $this->getParent() !== null) {
+            $f = $this->_session->getFeed()->get($this->getParent()->getSafeId());
+            if ($f instanceof Base) {
+                return $f->addComment($commentPost);
+            }
+            return $f;
+        }
+        return null;
+    }
+
+    /**
+     * @return Comment|Error
+     */
+    public function save() {
+        return $this->addComment(new CommentPost($this, null));
+    }
+
+    /**
+     * @return null|Error
+     */
+    public function delete() {
+        return $this->_session->getClientService()->getCommentable()->delete($this->getParent() ?: $this, $this);
+    }
 }

@@ -13,6 +13,6 @@ class RestAccountEvent extends RestBase {
      * @return AccountEvent
      */
     public function get() {
-        return parent::restRequest("GET", "/account/event", null, AccountEvent::class);
+        return parent::restRequest(RestBase::_GET, "/account/event", null, AccountEvent::class);
     }
 }

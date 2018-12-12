@@ -32,6 +32,10 @@ class Photo extends Base {
      * @var \MySocialApp\Models\TagEntities
      */
     protected $tag_entities;
+    /**
+     * @var mixed
+     */
+    protected $_raw_content;
 
     /**
      * @return string
@@ -129,5 +133,33 @@ class Photo extends Base {
      */
     public function setTagEntities($tag_entities) {
         $this->tag_entities = $tag_entities;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRawContent() {
+        return $this->_raw_content;
+    }
+
+    /**
+     * @param mixed $raw_content
+     */
+    public function setRawContent($raw_content) {
+        $this->_raw_content = $raw_content;
+    }
+
+    /**
+     * @return Error|null
+     */
+    public function delete() {
+        return $this->_session->getClientService()->getPhoto()->delete($this->getSafeId());
+    }
+
+    /**
+     * @return Photo|Error
+     */
+    public function save() {
+        return $this->_session->getClientService()->getPhoto()->update($this->getSafeId(), $this);
     }
 }

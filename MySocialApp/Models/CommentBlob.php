@@ -44,6 +44,6 @@ class CommentBlob extends JSONable {
      * @param array
      */
     public function setSamples($samples) {
-        $this->samples = (new JSONableArray())->ofClass(Comment::class)->setSession($this->_session)->setArray($samples);
+        $this->samples = JSONableArray::createWith($samples, Comment::class, $this->_session);
     }
 }

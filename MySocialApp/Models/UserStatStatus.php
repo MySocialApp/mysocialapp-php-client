@@ -7,6 +7,14 @@ namespace MySocialApp\Models;
  * @package MySocialApp\Models
  */
 class UserStatStatus extends Base {
+
+    const _STATUS_CONNECTED = "CONNECTED";
+    const _STATUS_RIDING = "RIDING";
+    const _STATUS_AWAY = "AWAY";
+    const _STATUS_UNKNOWN = "UNKNOWN";
+    const _STATUS_NOT_CONNECTED = "NOT_CONNECTED";
+    const _STATUS_DISABLED = "DISABLED";
+
     /**
      * @var \DateTime
      */

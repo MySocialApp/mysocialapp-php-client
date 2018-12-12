@@ -7,7 +7,7 @@ namespace MySocialApp\Models;
  * @package MySocialApp\Models
  */
 class User extends Base {
-    private $PAGE_SIZE = 10;
+    const _PAGE_SIZE = 10;
     /**
      * @var string
      */
@@ -294,7 +294,7 @@ class User extends Base {
      * @param array $common_friends
      */
     public function setCommonFriends($common_friends) {
-        $this->common_friends = (new JSONableArray())->ofClass(User::class)->setSession($this->_session)->setArray($common_friends);
+        $this->common_friends = JSONableArray::createWith($common_friends, User::class, $this->_session);
     }
 
     /**
@@ -423,7 +423,7 @@ class User extends Base {
      * @param array $authorities
      */
     public function setAuthorities($authorities) {
-        $this->authorities = (new JSONableArray())->setSession($this->_session)->setArray($authorities);
+        $this->authorities = JSONableArray::createWith($authorities, null, $this->_session);
     }
 
     /**
@@ -445,6 +445,22 @@ class User extends Base {
      */
     public function save() {
         return $this->_session->getClientService()->getAccount()->update($this);
+    }
+
+    /**
+     * @param mixed $image
+     * @return Photo|Error
+     */
+    public function changeProfilePhoto($image) {
+        return $this->_session->getClientService()->getPhoto()->postPhotoForAccount($image, false, null);
+    }
+
+    /**
+     * @param mixed $image
+     * @return Photo|Error
+     */
+    public function changeProfileCoverPhoto($image) {
+        return $this->_session->getClientService()->getPhoto()->postPhotoForAccount($image, true, null);
     }
 
     /**
@@ -483,44 +499,301 @@ class User extends Base {
     }
 
     /**
-     * @param $page int
-     * @param $size int
+     * @param $page
+     * @param $to
+     * @param int $offset
+     * @return array|Error
+     */
+    private function _streamFriends($page, $to, $offset = 0) {
+        if ($offset >= User::_PAGE_SIZE) {
+            return $this->_streamFriends($page + 1, $to, $offset - User::_PAGE_SIZE);
+        }
+        $size = min(User::_PAGE_SIZE, $to - ($page * User::_PAGE_SIZE));
+        if ($size > 0) {
+            $e = $this->_session->getClientService()->getUser()->listFriends($page, $size, $this);
+            if ($e instanceof JSONableArray) {
+                $a = array_slice($e->getArray(), $offset);
+                if (count($e->getArray()) < User::_PAGE_SIZE) {
+                    return $a;
+                } else {
+                    $a2 = $this->_streamFriends($page + 1, $to);
+                    if (is_array($a2)) {
+                        return array_merge($a, $a2);
+                    } else {
+                        return $a;
+                    }
+                }
+            } else {
+                return $e;
+            }
+        }
+        return array();
+    }
+
+    /**
+     * @param int $limit
+     * @return array|Error
+     */
+    public function streamFriends($limit) {
+        return $this->listFriends(0, $limit);
+    }
+
+    /**
+     * @param int $page
+     * @param int $size
      * @return array|Error
      */
     public function listFriends($page = 0, $size = 10) {
-        $from = $page * $size;
         $to = ($page+1) * $size;
-        $size = min($size, $this->PAGE_SIZE);
-        $firstPage = $from % $size;
-        $page = ($from - $firstPage) / $size;
-        $friends = array();
-        while ($from < $to) {
-            $f = $this->_session->getClientService()->getUser()->listFriends($page, $size, $this);
-            if ($f instanceof Error) {
-                return $f;
-            }
-            if ($f === null) {
-                break;
-            }
-            if ($f instanceof JSONableArray) {
-                $from += $size - $firstPage;
-                $f = $f->getArray();
-                if (count($f) === 0) {
-                    break;
+        if ($size > User::_PAGE_SIZE) {
+            $offset = $page*$size;
+            $page = $offset / User::_PAGE_SIZE;
+            $offset -= $page * User::_PAGE_SIZE;
+            return $this->_streamFriends($page, $to, $offset);
+        } else {
+            return $this->_streamFriends($page, $to);
+        }
+    }
+
+    /**
+     * @param $page
+     * @param $to
+     * @param int $offset
+     * @return array|Error
+     */
+    private function _streamFeed($page, $to, $offset = 0) {
+        if ($offset >= User::_PAGE_SIZE) {
+            return $this->_streamFeed($page + 1, $to, $offset - User::_PAGE_SIZE);
+        }
+        $size = min(User::_PAGE_SIZE, $to - ($page * User::_PAGE_SIZE));
+        if ($size > 0) {
+            $e = $this->_session->getClientService()->getFeed()->listForUser($this->getSafeId(), $page, $size);
+            if ($e instanceof JSONableArray) {
+                $a = array_slice($e->getArray(), $offset);
+                if (count($e->getArray()) < User::_PAGE_SIZE) {
+                    return $a;
+                } else {
+                    $a2 = $this->_streamFeed($page + 1, $to);
+                    if (is_array($a2)) {
+                        return array_merge($a, $a2);
+                    } else {
+                        return $a;
+                    }
                 }
-                if ($firstPage > 0) {
-                    $f = array_slice($f, $firstPage);
-                    $firstPage = 0;
-                }
-                while ($from > $to) {
-                    array_pop($f);
-                    $from--;
-                }
-                foreach ($f as $friend) {
-                    $friends[] = $friend;
-                }
+            } else {
+                return $e;
             }
         }
-        return $friends;
+        return array();
+    }
+
+    /**
+     * @param int $limit
+     * @return array|Error
+     */
+    public function streamNewsFeed($limit) {
+        return $this->listNewsFeed(0, $limit);
+    }
+
+    /**
+     * @param int $page
+     * @param int $size
+     * @return array|Error
+     */
+    public function listNewsFeed($page = 0, $size = 10) {
+        $to = ($page+1) * $size;
+        if ($size > User::_PAGE_SIZE) {
+            $offset = $page*$size;
+            $page = $offset / User::_PAGE_SIZE;
+            $offset -= $page * User::_PAGE_SIZE;
+            return $this->_streamFeed($page, $to, $offset);
+        } else {
+            return $this->_streamFeed($page, $to);
+        }
+    }
+
+    /**
+     * @param \MySocialApp\Models\ConversationMessagePost $conversationMessagePost
+     * @return \MySocialApp\Models\ConversationMessage|Error
+     */
+    public function sendPrivateMessage($conversationMessagePost) {
+        $conversation = new Conversation();
+        $conversation->setMembers(array($this));
+        $c = $this->_session->getClientService()->getConversation()->post($conversation);
+        if ($c instanceof Conversation) {
+            return $c->sendMessage($conversationMessagePost);
+        }
+        return $c;
+    }
+
+    /**
+     * @param $page
+     * @param $to
+     * @param int $offset
+     * @return array|Error
+     */
+    private function _streamGroup($page, $to, $offset = 0) {
+        if ($offset >= User::_PAGE_SIZE) {
+            return $this->_streamGroup($page + 1, $to, $offset - User::_PAGE_SIZE);
+        }
+        $size = min(User::_PAGE_SIZE, $to - ($page * User::_PAGE_SIZE));
+        if ($size > 0) {
+            $e = $this->_session->getClientService()->getGroup()->listForMember($this->getSafeId(), $page, $size);
+            if ($e instanceof JSONableArray) {
+                $a = array_slice($e->getArray(), $offset);
+                if (count($e->getArray()) < User::_PAGE_SIZE) {
+                    return $a;
+                } else {
+                    $a2 = $this->_streamGroup($page + 1, $to);
+                    if (is_array($a2)) {
+                        return array_merge($a, $a2);
+                    } else {
+                        return $a;
+                    }
+                }
+            } else {
+                return $e;
+            }
+        }
+        return array();
+    }
+
+    /**
+     * @param int $limit
+     * @return array|Error
+     */
+    public function streamGroup($limit) {
+        return $this->listGroup(0, $limit);
+    }
+
+    /**
+     * @param int $page
+     * @param int $size
+     * @return array|Error
+     */
+    public function listGroup($page = 0, $size = 10) {
+        $to = ($page+1) * $size;
+        if ($size > User::_PAGE_SIZE) {
+            $offset = $page*$size;
+            $page = $offset / User::_PAGE_SIZE;
+            $offset -= $page * User::_PAGE_SIZE;
+            return $this->_streamGroup($page, $to, $offset);
+        } else {
+            return $this->_streamGroup($page, $to);
+        }
+    }
+
+    /**
+     * @param $page
+     * @param $to
+     * @param int $offset
+     * @return array|Error
+     */
+    private function _streamEvent($page, $to, $offset = 0) {
+        if ($offset >= User::_PAGE_SIZE) {
+            return $this->_streamEvent($page + 1, $to, $offset - User::_PAGE_SIZE);
+        }
+        $size = min(User::_PAGE_SIZE, $to - ($page * User::_PAGE_SIZE));
+        if ($size > 0) {
+            $e = $this->_session->getClientService()->getEvent()->listForMember($this->getSafeId(), $page, $size);
+            if ($e instanceof JSONableArray) {
+                $a = array_slice($e->getArray(), $offset);
+                if (count($e->getArray()) < User::_PAGE_SIZE) {
+                    return $a;
+                } else {
+                    $a2 = $this->_streamEvent($page + 1, $to);
+                    if (is_array($a2)) {
+                        return array_merge($a, $a2);
+                    } else {
+                        return $a;
+                    }
+                }
+            } else {
+                return $e;
+            }
+        }
+        return array();
+    }
+
+    /**
+     * @param int $limit
+     * @return array|Error
+     */
+    public function streamEvent($limit) {
+        return $this->listEvent(0, $limit);
+    }
+
+    /**
+     * @param int $page
+     * @param int $size
+     * @return array|Error
+     */
+    public function listEvent($page = 0, $size = 10) {
+        $to = ($page+1) * $size;
+        if ($size > User::_PAGE_SIZE) {
+            $offset = $page*$size;
+            $page = $offset / User::_PAGE_SIZE;
+            $offset -= $page * User::_PAGE_SIZE;
+            return $this->_streamEvent($page, $to, $offset);
+        } else {
+            return $this->_streamEvent($page, $to);
+        }
+    }
+
+    /**
+     * @param $page
+     * @param $to
+     * @param int $offset
+     * @return array|Error
+     */
+    private function _streamPhotoAlbum($page, $to, $offset = 0) {
+        if ($offset >= User::_PAGE_SIZE) {
+            return $this->_streamPhotoAlbum($page + 1, $to, $offset - User::_PAGE_SIZE);
+        }
+        $size = min(User::_PAGE_SIZE, $to - ($page * User::_PAGE_SIZE));
+        if ($size > 0) {
+            $e = $this->_session->getClientService()->getPhotoAlbum()->listForUser($this->getSafeId(), $page, $size);
+            if ($e instanceof JSONableArray) {
+                $a = array_slice($e->getArray(), $offset);
+                if (count($e->getArray()) < User::_PAGE_SIZE) {
+                    return $a;
+                } else {
+                    $a2 = $this->_streamPhotoAlbum($page + 1, $to);
+                    if (is_array($a2)) {
+                        return array_merge($a, $a2);
+                    } else {
+                        return $a;
+                    }
+                }
+            } else {
+                return $e;
+            }
+        }
+        return array();
+    }
+
+    /**
+     * @param int $limit
+     * @return array|Error
+     */
+    public function streamPhotoAlbum($limit) {
+        return $this->listPhotoAlbum(0, $limit);
+    }
+
+    /**
+     * @param int $page
+     * @param int $size
+     * @return array|Error
+     */
+    public function listPhotoAlbum($page = 0, $size = 10) {
+        $to = ($page+1) * $size;
+        if ($size > User::_PAGE_SIZE) {
+            $offset = $page*$size;
+            $page = $offset / User::_PAGE_SIZE;
+            $offset -= $page * User::_PAGE_SIZE;
+            return $this->_streamPhotoAlbum($page, $to, $offset);
+        } else {
+            return $this->_streamPhotoAlbum($page, $to);
+        }
     }
 }

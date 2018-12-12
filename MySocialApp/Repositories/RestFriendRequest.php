@@ -14,6 +14,6 @@ class RestFriendRequest extends RestBase {
      * @return FriendRequests|Error
      */
     public function get() {
-        return parent::restRequest("GET", "/friend/request", null, FriendRequests::class);
+        return parent::restRequest(RestBase::_GET, "/friend/request", null, FriendRequests::class);
     }
 }

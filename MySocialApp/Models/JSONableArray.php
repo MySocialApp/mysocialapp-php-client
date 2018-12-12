@@ -16,6 +16,10 @@ class JSONableArray extends JSONable {
      */
     private $array;
 
+    public static function createWith($array, $forClass, $withSession) {
+        return (new JSONableArray())->ofClass($forClass)->initWith(array(),$withSession)->setArray($array);
+    }
+
     public function ofClass($class) {
         $this->class = $class;
         return $this;
@@ -63,9 +67,18 @@ class JSONableArray extends JSONable {
 
     /**
      * @param array $array
+     * @return JSONableArray
      */
     public function setArray($array) {
         $this->array = $array;
         return $this;
+    }
+
+    /**
+     * @param $subType string
+     * @return string
+     */
+    public static function classOf($subType) {
+        return JSONableArray::class."<".$subType.">";
     }
 }

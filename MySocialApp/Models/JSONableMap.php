@@ -55,9 +55,18 @@ class JSONableMap extends JSONable {
 
     /**
      * @param array $map
+     * @return JSONableMap
      */
     public function setMap($map) {
         $this->map = $map;
         return $this;
+    }
+
+    /**
+     * @param $subType string
+     * @return string
+     */
+    public static function classOf($subType) {
+        return JSONableMap::class."<".$subType.">";
     }
 }

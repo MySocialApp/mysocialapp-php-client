@@ -12,13 +12,17 @@ class FeedPostBuilder {
      */
     private $mMessage;
     /**
-     * @var string
+     * @var mixed
      */
     private $mImage;
     /**
      * @var string
      */
     private $mVisibility;
+    /**
+     * @var mixed
+     */
+    private $mPayload;
 
     /**
      * @param $message string
@@ -30,11 +34,11 @@ class FeedPostBuilder {
     }
 
     /**
-     * @param $filename string
+     * @param $image mixed
      * @return FeedPostBuilder
      */
-    public function setImage($filename) {
-        $this->mImage = $filename;
+    public function setImage($image) {
+        $this->mImage = $image;
         return $this;
     }
 
@@ -47,6 +51,15 @@ class FeedPostBuilder {
         return $this;
     }
 
+    /**
+     * @param $payload mixed
+     * @return FeedPostBuilder
+     */
+    public function setPayload($payload) {
+        $this->mPayload = $payload;
+        return $this;
+    }
+
     public function build() {
         if ($this->mMessage === null && $this->mImage === null) {
             return null;
@@ -54,6 +67,7 @@ class FeedPostBuilder {
         $m = new TextWallMessage();
         $m->setAccessControl($this->mVisibility);
         $m->setMessage($this->mMessage);
+        $m->setPayload($this->mPayload);
         return new FeedPost($m, $this->mImage);
 
     }

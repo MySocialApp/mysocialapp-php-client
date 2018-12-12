@@ -112,4 +112,8 @@ class Error extends JSONable {
     public function setPath($path) {
         $this->path = $path;
     }
+
+    public function __construct($message = null) {
+        $this->message = $message;
+    }
 }

@@ -12,12 +12,44 @@ use MySocialApp\Models\User;
  */
 class RestUser extends RestBase {
 
+    public function getList($page, $size, $friendId = null, $latitude = null, $longitude = null, $fullName = null, $parameters = null) {
+        $p = $parameters ?: array();
+        $p["page"] = $page;
+        if ($size !== null) {
+            $p["size"] = $size;
+        }
+        if ($latitude !== null) {
+            $p["latitude"] = $latitude;
+        }
+        if ($longitude !== null) {
+            $p["longitude"] = $longitude;
+        }
+        if ($fullName !== null) {
+            $p["full_name"] = $fullName;
+        }
+        return $this->restRequest(RestBase::_GET,
+            $this->url("/user".(($friendId!==null)?"/".$friendId."/friend":""), $p),
+            null, JSONableArray::classOf(User::class));
+    }
+
+    public function listOutgoingRequests($page, $size = 10) {
+        return $this->restRequest(RestBase::_GET, $this->url("/friend/request/outgoing", array("page"=>$page,"size"=>$size)), null, JSONableArray::classOf(User::class));
+    }
+
+    public function listIncomingRequests($page, $size = 10) {
+        return $this->restRequest(RestBase::_GET, $this->url("/friend/request/incoming", array("page"=>$page,"size"=>$size)), null, JSONableArray::classOf(User::class));
+    }
+
+    public function listActive() {
+        return $this->restRequest(RestBase::_GET, "/user/active", null, JSONableArray::classOf(User::class));
+    }
+
     /**
      * @param $id int
      * @return User|Error
      */
     public function get($id) {
-        return parent::restRequest("GET", "/user/".$id, null, User::class);
+        return $this->restRequest(RestBase::_GET, "/user/".$id, null, User::class);
     }
 
     /**
@@ -25,18 +57,18 @@ class RestUser extends RestBase {
      * @return User|Error
      */
     public function getByExternalId($externalId) {
-        return parent::restRequest("GET", "/user/external/".$externalId, null, User::class);
+        return $this->restRequest(RestBase::_GET, "/user/external/".$externalId, null, User::class);
     }
 
     /**
      * @param $page int
      * @param $size int
      * @param $user User
-     * @return JSONableArray
+     * @return JSONableArray<User>
      */
     public function listFriends($page, $size, $user) {
-        return parent::restRequest("GET", "/user/".$user->getId()."/friend?page=${page}&size=${size}",
-            null, JSONableArray::class."<".User::class.">");
+        return $this->restRequest(RestBase::_GET, "/user/".$user->getSafeId()."/friend?page=${page}&size=${size}",
+            null, JSONableArray::classOf(User::class));
     }
 
     /**
@@ -44,15 +76,15 @@ class RestUser extends RestBase {
      * @return User|Error
      */
     public function requestAsFriend($user) {
-        return parent::restRequest("POST", "/user/".$user->getId()."/friend", null, User::class);
+        return $this->restRequest(RestBase::_POST, "/user/".$user->getSafeId()."/friend", null, User::class);
     }
 
     /**
-     * @param $user
+     * @param $user User
      * @return null|Error
      */
     public function cancelRequestAsFriend($user) {
-        return parent::restRequest("DELETE", "/user/".$user->getId()."/friend", null, null);
+        return $this->restRequest(RestBase::_DELETE, "/user/".$user->getSafeId()."/friend", null, null);
     }
 
     /**
@@ -60,22 +92,38 @@ class RestUser extends RestBase {
      * @return User|Error
      */
     public function acceptAsFriend($user) {
-        return parent::restRequest("POST", "/user/".$user->getId()."/friend", null, User::class);
+        return $this->restRequest(RestBase::_POST, "/user/".$user->getSafeId()."/friend", null, User::class);
     }
 
     /**
-     * @param $user
+     * @param $user User
      * @return null|Error
      */
     public function refuseAsFriend($user) {
-        return parent::restRequest("DELETE", "/user/".$user->getId()."/friend", null, null);
+        return $this->restRequest(RestBase::_DELETE, "/user/".$user->getSafeId()."/friend", null, null);
     }
 
     /**
-     * @param $user
+     * @param $user User
      * @return null|Error
      */
     public function noMoreFriend($user) {
-        return parent::restRequest("DELETE", "/user/".$user->getId()."/friend", null, null);
+        return $this->restRequest(RestBase::_DELETE, "/user/".$user->getSafeId()."/friend", null, null);
+    }
+
+    public function joinGroup($id) {
+        return $this->restRequest(RestBase::_POST, "/group/".$id."/member", null, User::class);
+    }
+
+    public function unjoinGroup($id) {
+        return $this->restRequest(RestBase::_DELETE, "/group/".$id."/member", null, null);
+    }
+
+    public function joinEvent($id) {
+        return $this->restRequest(RestBase::_POST, "/event/".$id."/member", null, User::class);
+    }
+
+    public function unjoinEvent($id) {
+        return $this->restRequest(RestBase::_DELETE, "/event/".$id."/member", null, null);
     }
 }

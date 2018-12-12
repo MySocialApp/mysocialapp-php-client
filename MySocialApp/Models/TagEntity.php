@@ -88,7 +88,7 @@ class TagEntity extends Base {
      * @param array $indices
      */
     public function setIndices($indices) {
-        $this->indices = (new JSONableArray())->setSession($this->_session)->setArray($indices);
+        $this->indices = JSONableArray::createWith($indices, null, $this->_session);
     }
 
     /**

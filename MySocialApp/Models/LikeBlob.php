@@ -49,7 +49,7 @@ class LikeBlob extends JSONable {
     }
 
     /**
-     * @return JSONableArray
+     * @return array
      */
     public function getSamples() {
         if ($this->samples !== null) {
@@ -59,9 +59,9 @@ class LikeBlob extends JSONable {
     }
 
     /**
-     * @param JSONableArray $samples
+     * @param array $samples
      */
     public function setSamples($samples) {
-        $this->samples = (new JSONableArray())->ofClass(Like::class)->setSession($this->_session)->setArray($samples);
+        $this->samples = JSONableArray::createWith($samples, Like::class, $this->_session);
     }
 }

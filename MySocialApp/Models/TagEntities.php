@@ -34,7 +34,7 @@ class TagEntities extends JSONable {
      * @param array $user_mention_tags
      */
     public function setUserMentionTags($user_mention_tags) {
-        $this->user_mention_tags = (new JSONableArray())->ofClass(UserMentionTag::class)->setSession($this->_session)->setArray($user_mention_tags);
+        $this->user_mention_tags = JSONableArray::createWith($user_mention_tags, UserMentionTag::class, $this->_session);
     }
 
     /**
@@ -51,7 +51,7 @@ class TagEntities extends JSONable {
      * @param array $url_tags
      */
     public function setUrlTags($url_tags) {
-        $this->url_tags = (new JSONableArray())->ofClass(URLTag::class)->setSession($this->_session)->setArray($url_tags);
+        $this->url_tags = JSONableArray::createWith($url_tags, URLTag::class, $this->_session);
     }
 
     /**
@@ -68,6 +68,23 @@ class TagEntities extends JSONable {
      * @param array $hash_tags
      */
     public function setHashTags($hash_tags) {
-        $this->hash_tags = (new JSONableArray())->ofClass(HashTag::class)->setSession($this->_session)->setArray($hash_tags);
+        $this->hash_tags = JSONableArray::createWith($hash_tags, HashTag::class, $this->_session);
+    }
+
+    /**
+     * @return array
+     */
+    public function allTags() {
+        $a = array();
+        foreach (($this->getUserMentionTags() ?: array()) as $t) {
+            $a[] = $t;
+        }
+        foreach (($this->getUrlTags() ?: array()) as $t) {
+            $a[] = $t;
+        }
+        foreach (($this->getHashTags() ?: array()) as $t) {
+            $a[] = $t;
+        }
+        return $a;
     }
 }

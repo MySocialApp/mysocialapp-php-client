@@ -3,9 +3,14 @@
 namespace MySocialApp\Repositories;
 
 use MySocialApp\Models\Base;
+use MySocialApp\Models\Error;
+use MySocialApp\Models\Event;
+use MySocialApp\Models\Group;
+use MySocialApp\Models\PhotoAlbum;
+use MySocialApp\Models\PointOfInterest;
+use MySocialApp\Models\Ride;
 use MySocialApp\Models\TextWallMessage;
 use MySocialApp\Models\User;
-use MySocialApp\Models\WallActivity;
 
 /**
  * Class RestTextWallMessage
@@ -13,10 +18,29 @@ use MySocialApp\Models\WallActivity;
  */
 class RestTextWallMessage extends RestBase {
 
-    private function getBaseUrl($target) {
-        if ($target instanceof Base && $id = $target->getIdStr()) {
+    private function getBaseUrl($target, $profile = null) {
+        if ($target instanceof Base && $target->getSafeId() !== null) {
+            $id = $target->getSafeId();
+            if ($target instanceof Event) {
+                return "/event/".$id;
+            }
+            if ($target instanceof Group) {
+                return "/group/".$id.(($profile !== null)?"/profile":"");
+            }
+            if ($target instanceof Ride) {
+                return "/ride/".$id;
+            }
             if ($target instanceof User) {
-                return "/user/${id}";
+                if ($profile !== null) {
+                    return "/account/profile";
+                }
+                return "/user/".$id;
+            }
+            if ($target instanceof PhotoAlbum) {
+                return "/photo/album/".$id;
+            }
+            if ($target instanceof PointOfInterest) {
+                return "/poi/".$id;
             }
         }
         return null;
@@ -25,15 +49,51 @@ class RestTextWallMessage extends RestBase {
     /**
      * @param $target Base
      * @param $message TextWallMessage
-     * @return \MySocialApp\Models\Base|Error
+     * @return Base|Error
      */
     public function post($target, $message) {
         if ($url = $this->getBaseUrl($target)) {
-            $feed = parent::restRequest("POST", $url."/wall/message", $message, WallActivity::class);
-            if ($feed instanceof WallActivity) {
-                return $feed->getObject();
+            return parent::restRequest(RestBase::_POST, $url."/wall/message", $message, Base::class);
+        }
+        return null;
+    }
+
+    /**
+     * @param \MySocialApp\Models\Base $target
+     * @param \MySocialApp\Models\TextWallMessage $message
+     * @param mixed $image
+     * @param bool|null $profile
+     * @param mixed|null $payload
+     * @param string $album
+     * @return \MySocialApp\Models\Base|null
+     */
+    public function postImage($target, $message, $image, $profile = null, $payload = null, $album = "mes photos") {
+        if ($url = $this->getBaseUrl($target, $profile)) {
+            $a = array();
+            $url .= "/photo";
+            if ($target instanceof User && $profile === true) {
+                $url = "photo";
             }
-            return $feed;
+            if ($profile === false) {
+                $url .= "/cover";
+            }
+            $a[] = new RestMultipartData("file", "image", RestMultipartData::_JPEG, $image);
+            if ($album !== null) {
+                $a[] = new RestMultipartData("album", null, RestMultipartData::_MULTIPART, $album);
+            }
+            if ($message->getMessage() !== null) {
+                $a[] = new RestMultipartData("message", null, RestMultipartData::_MULTIPART, $message->getMessage());
+            }
+            if ($message->getAccessControl() !== null) {
+                $a[] = new RestMultipartData("access_control", null, RestMultipartData::_MULTIPART, $message->getAccessControl());
+            }
+            if ($message->getTagEntities() !== null) {
+                $a[] = new RestMultipartData("tag_entities", null, RestMultipartData::_MULTIPART, $message->getTagEntities());
+            }
+            if ($payload !== null) {
+                $a[] = new RestMultipartData("payload", null, RestMultipartData::_MULTIPART, $payload);
+            }
+            return $this->restRequest(RestBase::_POST, $url, new RestMultipart($a), Base::class);
         }
         return null;
     }

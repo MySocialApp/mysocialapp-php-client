@@ -87,7 +87,7 @@ class JSONable {
             $p = substr($className, 0, 1);
             if ($p == "\\" || ctype_upper($p)) {
                 $subtype = null;
-                if (($from = strpos($className, "<")) !== false && ($to = strpos($className, ">")) !== false) {
+                if (($from = strpos($className, "<")) !== false && ($to = strrpos($className, ">")) !== false) {
                     $subtype = substr($className, $from + 1, $to - $from - 1);
                     $className = substr($className, 0, $from);
                 }
@@ -128,7 +128,8 @@ class JSONable {
         } else if ($o instanceof JSONable) {
             return $o->toJSON();
         } else if ($o instanceof \DateTime) {
-            return json_encode($o->format("c"));
+            $o->setTimezone(new \DateTimeZone('UTC'));
+            return json_encode($o->format('Y-m-d\TH:i:s\Z'));
         }
         return json_encode($o);
     }

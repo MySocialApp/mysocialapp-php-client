@@ -12,14 +12,14 @@ class FeedPost {
      */
     protected $textWallMessage;
     /**
-     * @var string
+     * @var mixed
      */
     protected $photo;
 
     /**
      * FeedPost constructor.
      * @param $textWallMessage TextWallMessage
-     * @param $photo string
+     * @param $photo mixed
      */
     public function __construct($textWallMessage, $photo) {
         $this->textWallMessage = $textWallMessage;
@@ -41,14 +41,14 @@ class FeedPost {
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getPhoto() {
         return $this->photo;
     }
 
     /**
-     * @param string $photo
+     * @param mixed $photo
      */
     public function setPhoto($photo) {
         $this->photo = $photo;

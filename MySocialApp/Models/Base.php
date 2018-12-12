@@ -72,9 +72,16 @@ class Base extends JSONable {
      */
     protected $comments;
 
+    protected $payload;
+
     public function initWith($json, $session = null)
     {
-        if (isset($json["type"]) && ($type = $json["type"]) !== null) {
+        if (isset($json["entity_type"]) && ($type = $json["entity_type"]) !== null) {
+            $type = "\\MySocialApp\\Models\\".$type;
+            if (!$this instanceof $type && ($c = new $type()) !== null && $c instanceof JSONable) {
+                return $c->initWith($json, $session);
+            }
+        } else if (isset($json["type"]) && ($type = $json["type"]) !== null) {
             $type = "\\MySocialApp\\Models\\".$type;
             if (!$this instanceof $type && ($c = new $type()) !== null && $c instanceof JSONable) {
                 return $c->initWith($json, $session);
@@ -109,6 +116,13 @@ class Base extends JSONable {
      */
     public function setIdStr($id_str) {
         $this->id_str = $id_str;
+    }
+
+    /**
+     * @return string|int
+     */
+    public function getSafeId() {
+        return $this->getIdStr() ?: $this->getId();
     }
 
     /**
@@ -308,10 +322,117 @@ class Base extends JSONable {
     }
 
     /**
+     * @return mixed|null
+     */
+    public function getPayload() {
+        return $this->payload;
+    }
+
+    /**
+     * @param mixed|null $payload
+     */
+    public function setPayload($payload) {
+        $this->payload = $payload;
+    }
+
+    /**
+     * @return array|Error
+     */
+    public function listLikes() {
+        $a = $this->_session->getClientService()->getLikeable()->get($this);
+        if ($a instanceof JSONableArray) {
+            return $a->getArray();
+        }
+        return $a;
+    }
+
+    /**
+     * @return Like|Error
+     */
+    public function addLike() {
+        return $this->_session->getClientService()->getLikeable()->post($this);
+    }
+
+    /**
+     * @return Error|null
+     */
+    public function removeLike() {
+        return $this->_session->getClientService()->getLikeable()->delete($this);
+    }
+
+    /**
+     * @return array|Error
+     */
+    public function listComments() {
+        $a = $this->_session->getClientService()->getCommentable()->get($this);
+        if ($a instanceof JSONableArray) {
+            return $a->getArray();
+        }
+        return $a;
+    }
+
+    /**
+     * @param \MySocialApp\Models\CommentPost $commentPost
+     * @return Comment|Error
+     */
+    public function addComment($commentPost) {
+        return $this->_session->getClientService()->getCommentable()->post($this, $commentPost->getComment(), $commentPost->getPhoto());
+    }
+
+    /**
+     * @param \MySocialApp\Models\Comment $comment
+     * @param mixed $photo
+     * @return Comment|Error
+     */
+    public function addCommentWithPhoto($comment, $photo) {
+        return $this->_session->getClientService()->getCommentable()->post($this, $comment, $photo);
+    }
+
+    /**
+     * @return null|Error
+     */
+    public function ignore() {
+        return $this->_session->getClientService()->getFeed()->stopFollow($this->getSafeId());
+    }
+
+    /**
+     * @return null|Error
+     */
+    public function abuse() {
+        return $this->_session->getClientService()->getReport()->post($this->getSafeId());
+    }
+
+    /**
+     * @return null|Error
+     */
+    public function delete() {
+        return $this->_session->getClientService()->getFeed()->delete($this->getSafeId());
+    }
+
+    /**
      * @param $feedPost FeedPost
-     * @return Base
+     * @return Feed
      */
     public function sendWallPost($feedPost) {
+        if ($feedPost->getPhoto() !== null) {
+            return $this->_session->getClientService()->getTextWallMessage()->postImage($this, $feedPost->getTextWallMessage(), $feedPost->getPhoto(), null, $feedPost->getTextWallMessage()->getPayload());
+        }
         return $this->_session->getClientService()->getTextWallMessage()->post($this, $feedPost->getTextWallMessage());
+    }
+
+    /**
+     * @param $feedPost FeedPost
+     * @return Feed
+     */
+    public function createFeedPost($feedPost) {
+        return $this->sendWallPost($feedPost);
+    }
+
+    /**
+     * @param $feedPost FeedPost
+     * @return Feed
+     */
+    public function createNewsFeed($feedPost) {
+        return $this->sendWallPost($feedPost);
     }
 }

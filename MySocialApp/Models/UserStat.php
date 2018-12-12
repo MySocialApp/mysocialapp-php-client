@@ -32,51 +32,46 @@ class UserStat extends Base {
     }
 
     /**
-     * @param UserStatStatus $status
+     * @param $m
+     * @return array
      */
-    public function setStatus($status) {
-        $this->status = $status;
+    private function getMap($m) {
+        $m = $m ?: new JSONableMap();
+        return $m->getMap();
     }
 
     /**
-     * @return JSONableMap
+     * @return int
      */
-    public function getRides() {
-        return $this->rides;
+    public function getCreatedRides() {
+        return $this->getMap($this->rides)["created"] ?: 0;
     }
 
     /**
-     * @param JSONableMap $rides
+     * @return int
      */
-    public function setRides($rides) {
-        $this->rides = $rides;
+    public function getDoneRides() {
+        return $this->getMap($this->rides)["done"] ?: 0;
     }
 
     /**
-     * @return JSONableMap
+     * @return int
      */
-    public function getFriend() {
-        return $this->friend;
+    public function getDistanceRides() {
+        return $this->getMap($this->rides)["distance"] ?: 0;
     }
 
     /**
-     * @param JSONableMap $friend
+     * @return int
      */
-    public function setFriend($friend) {
-        $this->friend = $friend;
+    public function getTotalFriends() {
+        return $this->getMap($this->friend)["total"] ?: 0;
     }
 
     /**
-     * @return JSONableMap
+     * @return int
      */
-    public function getPhotos() {
-        return $this->photos;
-    }
-
-    /**
-     * @param JSONableMap $photos
-     */
-    public function setPhotos($photos) {
-        $this->photos = $photos;
+    public function getTotalPhotos() {
+        return $this->getMap($this->photos)["total"] ?: 0;
     }
 }

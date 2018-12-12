@@ -13,6 +13,12 @@ use MySocialApp\Services\Session;
  * @package MySocialApp\Repositories
  */
 class RestBase {
+
+    const _GET = "GET";
+    const _POST = "POST";
+    const _PUT = "PUT";
+    const _DELETE = "DELETE";
+
     /**
      * @var Session
      */
@@ -33,6 +39,28 @@ class RestBase {
         } else {
             return "{noRootUrl}";
         }
+    }
+
+    private function getUrlEncoded($d) {
+        if ($d instanceof JSONable) {
+            return urlencode($d->toJSON());
+        } else if ($d instanceof \DateTime) {
+            return urlencode(\DateTime::createFromFormat(DATE_ATOM, $d));
+        } else if (is_object($d) || is_array($d)) {
+            return urlencode(json_encode($d));
+        } else {
+            return urlencode($d);
+        }
+    }
+
+    protected function url($base, $parameters) {
+        $url = $base;
+        $sep = "?";
+        foreach($parameters as $k => $v) {
+            $url .= $sep.$this->getUrlEncoded($k)."=".$this->getUrlEncoded($v);
+            $sep = "&";
+        }
+        return $url;
     }
 
     /**
@@ -57,6 +85,10 @@ class RestBase {
         $data = $inputData;
         if ($data instanceof JSONable) {
             $data = $data->toJSON();
+        } else if ($data instanceof RestMultipart) {
+            $boundary = '--------------------------'.microtime(true);
+            $data = $data->getContent($boundary);
+            $contentType = "multipart/form-data; boundary=".$boundary;
         } else if (is_object($data) || is_array($data)) {
             $data = json_encode($data);
         } else if ($data != null && !is_string($data)) {
@@ -89,10 +121,11 @@ class RestBase {
         $c = file_get_contents($url, false, $context);
         if (is_array($http_response_header) && $this->isDebug()) {
             echo json_encode($http_response_header, JSON_PRETTY_PRINT).PHP_EOL;
+            echo $c.PHP_EOL.PHP_EOL;
         }
         if (isset($http_response_header[0]) && ($res = $http_response_header[0])) {
             if (strpos($res, "HTTP/1.1 2") !== false) {
-                if ($outputClass !== null && ($o = JSONable::getInstanceFromClassName($outputClass)) !== null) {
+                if ($c !== null && strlen($c) > 0 && $outputClass !== null && ($o = JSONable::getInstanceFromClassName($outputClass)) !== null) {
                     $o = $o->initWith(json_decode($c, true), $this->session);
                     return $o;
                 }

@@ -27,7 +27,7 @@ class FriendRequests extends Base {
      * @param array $outgoing
      */
     public function setOutgoing($outgoing) {
-        $this->outgoing = (new JSONableArray())->ofClass(User::class)->setSession($this->_session)->setArray($outgoing);
+        $this->outgoing = JSONableArray::createWith($outgoing, User::class, $this->_session);
     }
 
     /**
@@ -44,6 +44,6 @@ class FriendRequests extends Base {
      * @param array $incoming
      */
     public function setIncoming($incoming) {
-        $this->incoming = (new JSONableArray())->ofClass(User::class)->setSession($this->_session)->setArray($incoming);
+        $this->incoming = JSONableArray::createWith($incoming, User::class, $this->_session);
     }
 }

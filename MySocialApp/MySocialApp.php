@@ -5,10 +5,11 @@ namespace MySocialApp;
 use MySocialApp\Models\AuthenticationToken;
 use MySocialApp\Models\Error;
 use MySocialApp\Models\Login;
+use MySocialApp\Models\Reset;
 use MySocialApp\Models\User;
-use MySocialApp\MySocialApp\Builder;
 use MySocialApp\Repositories\RestAccount;
 use MySocialApp\Repositories\RestLogin;
+use MySocialApp\Repositories\RestReset;
 use MySocialApp\Services\ClientConfiguration;
 use MySocialApp\Services\Configuration;
 use MySocialApp\Services\Session;
@@ -33,10 +34,22 @@ class MySocialApp {
     protected $login;
 
     /**
+     * @var RestReset
+     */
+    protected $reset;
+
+    /**
      * @return RestLogin
      */
     protected function getLogin() {
         return $this->login ?: ($this->login = new RestLogin(null, $this->configuration));
+    }
+
+    /**
+     * @return RestReset
+     */
+    protected function getReset() {
+        return $this->reset ?: ($this->reset = new RestReset(null, $this->configuration));
     }
 
     /**
@@ -69,9 +82,8 @@ class MySocialApp {
         $user = new User($username, $email, $password, $firstName);
         if (($user = $this->getAccount()->create($user)) && $user instanceof User) {
             return $this->connect($email, $password);
-        } else if ($user instanceof Error) {
-            return $user;
         }
+        return $user;
     }
 
     /**
@@ -96,8 +108,27 @@ class MySocialApp {
         $login = new Login($username, $password);
         if (($login = $this->getLogin()->login($login)) && $login instanceof Login) {
             return new Session($this->configuration, $this->clientConfiguration, new AuthenticationToken($username, $login->getAccessToken()));
-        } else if ($login instanceof Error) {
-            return $login;
         }
+        return $login;
+    }
+
+    /**
+     * @param string $email
+     * @return Reset|Error
+     */
+    public function resetPasswordByEmail($email) {
+        $r = new Reset();
+        $r->setEmail($email);
+        return $this->getReset()->post($r);
+    }
+
+    /**
+     * @param string $username
+     * @return Reset|Error
+     */
+    public function resetPassword($username) {
+        $r = new Reset();
+        $r->setUsername($username);
+        return $this->getReset()->post($r);
     }
 }

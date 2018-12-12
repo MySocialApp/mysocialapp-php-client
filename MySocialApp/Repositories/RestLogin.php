@@ -15,7 +15,7 @@ class RestLogin extends RestBase {
      * @return Login|Error
      */
     public function login($login) {
-        return $this->restRequest("POST", "/login", $login, Login::class);
+        return $this->restRequest(RestBase::_POST, "/login", $login, Login::class);
     }
 
     /**
@@ -23,14 +23,14 @@ class RestLogin extends RestBase {
      * @return Login|Error
      */
     public function loginWithFacebook($login) {
-        return $this->restRequest("POST", "/facebook/login", $login, Login::class);
+        return $this->restRequest(RestBase::_POST, "/facebook/login", $login, Login::class);
     }
 
     /**
      * @return null|Error
      */
     public function logout() {
-        return $this->restRequest("POST", "/logout", null, null);
+        return $this->restRequest(RestBase::_POST, "/logout", null, null);
     }
 
     /**
@@ -38,6 +38,6 @@ class RestLogin extends RestBase {
      * @return null|Error
      */
     public function deleteAccount($login) {
-        return $this->restRequest("DELETE", "/account", $login, null);
+        return $this->restRequest(RestBase::_DELETE, "/account", $login, null);
     }
 }

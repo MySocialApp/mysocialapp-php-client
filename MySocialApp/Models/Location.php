@@ -187,4 +187,46 @@ class Location extends BaseLocation {
     public function setCompleteCityAddress($complete_city_address) {
         $this->complete_city_address = $complete_city_address;
     }
+
+    public function getLongitude() {
+        if ($this->location !== null && $this->location->getLongitude() !== null) {
+            return $this->location->getLongitude();
+        }
+        return parent::getLongitude();
+    }
+
+    public function setLongitude($longitude) {
+        if ($this->location !== null) {
+            $this->location->setLongitude($longitude);
+        }
+        parent::setLongitude($longitude);
+    }
+
+    public function getLatitude() {
+        if ($this->location !== null && $this->location->getLatitude() !== null) {
+            return $this->location->getLatitude();
+        }
+        return parent::getLatitude();
+    }
+
+    public function setLatitude($latitude) {
+        if ($this->location !== null) {
+            $this->location->setLatitude($latitude);
+        }
+        parent::setLatitude($latitude);
+    }
+
+    public function getAccuracy() {
+        if ($this->location !== null && $this->location->getAccuracy() !== null) {
+            return $this->location->getAccuracy();
+        }
+        return parent::getAccuracy();
+    }
+
+    public function setAccuracy($accuracy) {
+        if ($this->location !== null) {
+            $this->location->setAccuracy($accuracy);
+        }
+        parent::setAccuracy($accuracy);
+    }
 }
