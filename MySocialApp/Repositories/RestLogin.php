@@ -19,6 +19,14 @@ class RestLogin extends RestBase {
     }
 
     /**
+     * @param string $userId
+     * @return \MySocialApp\Models\Login|Error
+     */
+    public function loginAs($userId) {
+        return $this->restRequest(RestBase::_POST, "/login/as/".$userId, null, Login::class);
+    }
+
+    /**
      * @param $login Login
      * @return Login|Error
      */

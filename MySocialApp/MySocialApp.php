@@ -72,14 +72,13 @@ class MySocialApp {
     }
 
     /**
-     * @param $username string
      * @param $email string
      * @param $password string
      * @param $firstName string
      * @return Session|Error
      */
-    public function createAccount($username, $email, $password, $firstName = null) {
-        $user = new User($username, $email, $password, $firstName);
+    public function createAccount($email, $password, $firstName = null) {
+        $user = new User($email, $password, $firstName);
         if (($user = $this->getAccount()->create($user)) && $user instanceof User) {
             return $this->connect($email, $password);
         }
@@ -96,18 +95,18 @@ class MySocialApp {
     }
 
     /**
-     * @param $username string
-     * @param $password string
+     * @param $email null|string
+     * @param $password null|string
      * @param $accessToken null|string
      * @return Session|Error
      */
-    public function connect($username, $password, $accessToken = null) {
+    public function connect($email, $password, $accessToken = null) {
         if ($accessToken !== null) {
             return new Session($this->configuration, $this->clientConfiguration, new AuthenticationToken(null, $accessToken));
         }
-        $login = new Login($username, $password);
+        $login = new Login($email, $password);
         if (($login = $this->getLogin()->login($login)) && $login instanceof Login) {
-            return new Session($this->configuration, $this->clientConfiguration, new AuthenticationToken($username, $login->getAccessToken()));
+            return new Session($this->configuration, $this->clientConfiguration, new AuthenticationToken($login->getUsername(), $login->getAccessToken()));
         }
         return $login;
     }

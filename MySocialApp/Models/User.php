@@ -2,6 +2,8 @@
 
 namespace MySocialApp\Models;
 
+use MySocialApp\Services\Session;
+
 /**
  * Class User
  * @package MySocialApp\Models
@@ -795,5 +797,16 @@ class User extends Base {
         } else {
             return $this->_streamPhotoAlbum($page, $to);
         }
+    }
+
+    /**
+     * @return Error|Session
+     */
+    public function connectAsUser() {
+        if (($login = $this->_session->getClientService()->getLogin()->loginAs($this->getSafeId())) && $login instanceof Login) {
+            return new Session($this->_session->getConfiguration(), $this->_session->getClientConfiguration(),
+                new AuthenticationToken($login->getUsername(), $login->getAccessToken()));
+        }
+        return $login;
     }
 }
