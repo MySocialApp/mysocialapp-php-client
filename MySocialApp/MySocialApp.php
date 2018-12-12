@@ -95,6 +95,14 @@ class MySocialApp {
     }
 
     /**
+     * @param string $token
+     * @return Error|Session
+     */
+    public function connectByToken($token) {
+        return $this->connect(null, null, $token);
+    }
+
+    /**
      * @param $email null|string
      * @param $password null|string
      * @param $accessToken null|string
