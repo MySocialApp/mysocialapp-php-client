@@ -4,7 +4,11 @@ namespace MySocialApp\Services;
 
 use MySocialApp\Models\AuthenticationToken;
 use MySocialApp\Models\Fluent\FluentAccount;
+use MySocialApp\Models\Fluent\FluentConversation;
+use MySocialApp\Models\Fluent\FluentEvent;
 use MySocialApp\Models\Fluent\FluentFeed;
+use MySocialApp\Models\Fluent\FluentFriend;
+use MySocialApp\Models\Fluent\FluentPhoto;
 use MySocialApp\Models\Fluent\FluentUser;
 
 /**
@@ -73,6 +77,30 @@ class Session {
     }
 
     /**
+     * @var FluentConversation
+     */
+    protected $conversation;
+
+    /**
+     * @return FluentConversation
+     */
+    public function getConversation() {
+        return $this->conversation ?: ($this->conversation = new FluentConversation($this));
+    }
+
+    /**
+     * @var FluentEvent
+     */
+    protected $event;
+
+    /**
+     * @return FluentEvent
+     */
+    public function getEvent() {
+        return $this->event ?: ($this->event = new FluentEvent($this));
+    }
+
+    /**
      * @var FluentFeed
      */
     protected $feed;
@@ -82,6 +110,30 @@ class Session {
      */
     public function getFeed() {
         return $this->feed ?: ($this->feed = new FluentFeed($this));
+    }
+
+    /**
+     * @var FluentFriend
+     */
+    protected $friend;
+
+    /**
+     * @return FluentFriend
+     */
+    public function getFriend() {
+        return $this->friend ?: ($this->friend = new FluentFriend($this));
+    }
+
+    /**
+     * @var FluentPhoto
+     */
+    protected $photo;
+
+    /**
+     * @return FluentPhoto
+     */
+    public function getPhoto() {
+        return $this->photo ?: ($this->photo = new FluentPhoto($this));
     }
 
     /**
