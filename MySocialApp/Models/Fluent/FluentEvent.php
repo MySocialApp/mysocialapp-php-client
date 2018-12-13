@@ -8,6 +8,7 @@ use MySocialApp\Models\EventOptions;
 use MySocialApp\Models\EventOptionsBuilder;
 use MySocialApp\Models\JSONableArray;
 use MySocialApp\Models\SearchResults;
+use MySocialApp\Models\SearchResultValueEvent;
 use MySocialApp\Services\Session;
 
 /**
@@ -35,7 +36,7 @@ class FluentEvent {
      */
     private function _stream($page, $to, $options, $offset = 0) {
         if ($offset >= FluentEvent::_PAGE_SIZE) {
-            return $this->_stream($page + 1, $to, $offset - FluentEvent::_PAGE_SIZE);
+            return $this->_stream($page + 1, $to, $options, $offset - FluentEvent::_PAGE_SIZE);
         }
         $size = min(FluentEvent::_PAGE_SIZE, $to - ($page * FluentEvent::_PAGE_SIZE));
         if ($size > 0) {
@@ -139,8 +140,14 @@ class FluentEvent {
      */
     public function search($search, $page = 0, $size = 10) {
         $r = $this->_session->getClientService()->getSearch()->get($page, $size, $search->toQueryParams());
-        if ($r instanceof SearchResults && $r->getResultsByType() !== null) {
-            return $r->getResultsByType()->getEvents();
+        if ($r instanceof SearchResults) {
+            if ($r->getResultsByType() !== null) {
+                return $r->getResultsByType()->getEvents();
+            }
+            $r = new SearchResultValueEvent();
+            $r->setData(array());
+            $r->setMatchedCount(0);
+            return $r;
         }
         return $r;
     }

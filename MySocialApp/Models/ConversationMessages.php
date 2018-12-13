@@ -127,16 +127,16 @@ class ConversationMessages extends JSONable {
     }
 
     /**
-     * @return JSONableArray
+     * @return array
      */
     public function getSamples() {
-        return $this->samples;
+        return $this->arrayFrom($this->samples);
     }
 
     /**
-     * @param JSONableArray $samples
+     * @param array $samples
      */
     public function setSamples($samples) {
-        $this->samples = $samples;
+        $this->samples = (new JSONableArray())->ofClass(ConversationMessage::class)->setArray($samples);
     }
 }

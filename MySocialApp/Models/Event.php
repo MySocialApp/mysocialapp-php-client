@@ -232,25 +232,25 @@ class Event extends BaseCustomField {
     }
 
     /**
-     * @return JSONableArray
+     * @return array
      */
     public function getMembers() {
         if ($this->members === null) {
             $e = $this->_session->getClientService()->getEvent()->get($this->getSafeId());
             if ($e instanceof Event) {
-                $this->members = $e->getMembers() ?: array();
+                $this->members = $e->getMembers() ?: (new JSONableArray())->ofClass(User::class);
             } else {
                 return $e;
             }
         }
-        return $this->members;
+        return $this->arrayFrom($this->members);
     }
 
     /**
-     * @param JSONableArray $members
+     * @param array $members
      */
     public function setMembers($members) {
-        $this->members = $members;
+        $this->members = (new JSONableArray())->ofClass(User::class)->setArray($members);
     }
 
     /**

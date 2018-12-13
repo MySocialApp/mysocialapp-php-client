@@ -76,14 +76,14 @@ class Base extends JSONable {
 
     public function initWith($json, $session = null)
     {
-        if (isset($json["entity_type"]) && ($type = $json["entity_type"]) !== null) {
-            $type = "\\MySocialApp\\Models\\".$type;
-            if (!$this instanceof $type && ($c = new $type()) !== null && $c instanceof JSONable) {
+        if (isset($json["type"]) && ($type = $json["type"]) !== null) {
+            $type = "\\MySocialApp\\Models\\" . $type;
+            if (class_exists($type) && !$this instanceof $type && ($c = new $type()) !== null && $c instanceof JSONable) {
                 return $c->initWith($json, $session);
             }
-        } else if (isset($json["type"]) && ($type = $json["type"]) !== null) {
-            $type = "\\MySocialApp\\Models\\".$type;
-            if (!$this instanceof $type && ($c = new $type()) !== null && $c instanceof JSONable) {
+        } else if (isset($json["entity_type"]) && ($type = $json["entity_type"]) !== null) {
+            $type = "\\MySocialApp\\Models\\" . $type;
+            if (class_exists($type) && !$this instanceof $type && ($c = new $type()) !== null && $c instanceof JSONable) {
                 return $c->initWith($json, $session);
             }
         }
@@ -339,11 +339,7 @@ class Base extends JSONable {
      * @return array|Error
      */
     public function listLikes() {
-        $a = $this->_session->getClientService()->getLikeable()->get($this);
-        if ($a instanceof JSONableArray) {
-            return $a->getArray();
-        }
-        return $a;
+        return $this->arrayFrom($this->_session->getClientService()->getLikeable()->get($this));
     }
 
     /**
@@ -364,11 +360,7 @@ class Base extends JSONable {
      * @return array|Error
      */
     public function listComments() {
-        $a = $this->_session->getClientService()->getCommentable()->get($this);
-        if ($a instanceof JSONableArray) {
-            return $a->getArray();
-        }
-        return $a;
+        return $this->arrayFrom($this->_session->getClientService()->getCommentable()->get($this));
     }
 
     /**

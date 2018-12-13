@@ -55,10 +55,7 @@ class Conversation extends Base {
      * @return array
      */
     public function getMembers() {
-        if ($this->members !== null) {
-            return $this->members->getArray();
-        }
-        return $this->members;
+        return $this->arrayFrom($this->members);
     }
 
     /**

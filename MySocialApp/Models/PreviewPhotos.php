@@ -35,10 +35,7 @@ class PreviewPhotos extends JSONable {
      * @return array
      */
     public function getSamples() {
-        if ($this->samples !== null) {
-            return $this->samples->getArray();
-        }
-        return $this->samples;
+        return $this->arrayFrom($this->samples);
     }
 
     /**

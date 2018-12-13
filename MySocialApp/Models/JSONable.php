@@ -16,6 +16,22 @@ class JSONable {
     protected $_session;
 
     /**
+     * @param JSONableArray|JSONableMap|JSONable $jsonAble
+     * @return array|JSONable|null
+     */
+    protected function arrayFrom($jsonAble) {
+        if ($jsonAble !== null) {
+            if ($jsonAble instanceof JSONableArray) {
+                return $jsonAble->getArray();
+            } else if ($jsonAble instanceof JSONableMap) {
+                return $jsonAble->getMap();
+            }
+            return $jsonAble;
+        }
+        return null;
+    }
+
+    /**
      * @param $json array
      * @param $session Session
      * @return $this JSONable or maybe null

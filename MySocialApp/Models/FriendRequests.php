@@ -17,10 +17,7 @@ class FriendRequests extends Base {
      * @return array
      */
     public function getOutgoing() {
-        if ($this->outgoing !== null) {
-            return $this->outgoing->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->outgoing);
     }
 
     /**
@@ -34,10 +31,7 @@ class FriendRequests extends Base {
      * @return array
      */
     public function getIncoming() {
-        if ($this->incoming !== null) {
-            return $this->incoming->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->incoming);
     }
 
     /**

@@ -32,16 +32,16 @@ class SearchResultValueUser extends JSONable {
     }
 
     /**
-     * @return JSONableArray
+     * @return array
      */
     public function getData() {
-        return $this->data;
+        return $this->arrayFrom($this->data);
     }
 
     /**
-     * @param JSONableArray $data
+     * @param array $data
      */
     public function setData($data) {
-        $this->data = $data;
+        $this->data = (new JSONableArray())->ofClass(User::class)->setArray($data);
     }
 }

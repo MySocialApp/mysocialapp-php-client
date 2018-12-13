@@ -85,17 +85,17 @@ class PointOfInterest extends BaseCustomField {
     }
 
     /**
-     * @return JSONableArray
+     * @return array
      */
     public function getPhotos() {
-        return $this->photos;
+        return $this->arrayFrom($this->photos);
     }
 
     /**
-     * @param JSONableArray $photos
+     * @param array $photos
      */
     public function setPhotos($photos) {
-        $this->photos = $photos;
+        $this->photos = (new JSONableArray())->setArray($photos);
     }
 
     /**

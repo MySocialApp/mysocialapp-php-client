@@ -24,10 +24,7 @@ class TagEntities extends JSONable {
      * @return array
      */
     public function getUserMentionTags() {
-        if ($this->user_mention_tags !== null) {
-            return $this->user_mention_tags->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->user_mention_tags);
     }
 
     /**
@@ -41,10 +38,7 @@ class TagEntities extends JSONable {
      * @return array
      */
     public function getUrlTags() {
-        if ($this->url_tags !== null) {
-            return $this->url_tags->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->url_tags);
     }
 
     /**
@@ -58,10 +52,7 @@ class TagEntities extends JSONable {
      * @return array
      */
     public function getHashTags() {
-        if ($this->hash_tags !== null) {
-            return $this->hash_tags->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->hash_tags);
     }
 
     /**

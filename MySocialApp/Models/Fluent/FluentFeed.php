@@ -6,6 +6,7 @@ use MySocialApp\Models\Error;
 use MySocialApp\Models\FeedPost;
 use MySocialApp\Models\JSONableArray;
 use MySocialApp\Models\SearchResults;
+use MySocialApp\Models\SearchResultValueFeed;
 use MySocialApp\Services\Session;
 
 /**
@@ -117,8 +118,14 @@ class FluentFeed {
      */
     public function search($search, $page = 0, $size = 10) {
         $r = $this->_session->getClientService()->getSearch()->get($page, $size, $search->toQueryParams());
-        if ($r instanceof SearchResults && $r->getResultsByType() !== null) {
-            return $r->getResultsByType()->getFeeds();
+        if ($r instanceof SearchResults) {
+            if ($r->getResultsByType() !== null) {
+                return $r->getResultsByType()->getFeeds();
+            }
+            $r = new SearchResultValueFeed();
+            $r->setData(array());
+            $r->setMatchedCount(0);
+            return $r;
         }
         return $r;
     }

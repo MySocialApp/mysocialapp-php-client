@@ -38,9 +38,6 @@ class BaseCustomField extends Base {
         if ($this->custom_fields === null) {
             $this->custom_fields = $this->_session->getClientService()->getCustomField()->listFor($this);
         }
-        if ($this->custom_fields !== null) {
-            return $this->custom_fields->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->custom_fields);
     }
 }

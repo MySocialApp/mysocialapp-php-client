@@ -94,17 +94,17 @@ class SearchResults extends JSONable {
     }
 
     /**
-     * @return JSONableArray
+     * @return array
      */
     public function getMatchedTypes() {
-        return $this->matched_types;
+        return $this->arrayFrom($this->matched_types);
     }
 
     /**
-     * @param JSONableArray $matched_types
+     * @param array $matched_types
      */
     public function setMatchedTypes($matched_types) {
-        $this->matched_types = $matched_types;
+        $this->matched_types = (new JSONableArray())->setArray($matched_types);
     }
 
     /**

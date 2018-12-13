@@ -78,10 +78,7 @@ class TagEntity extends Base {
      * @return array
      */
     public function getIndices() {
-        if ($this->indices !== null) {
-            return $this->indices->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->indices);
     }
 
     /**

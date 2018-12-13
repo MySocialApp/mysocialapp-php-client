@@ -32,16 +32,16 @@ class SearchResultValueFeed extends JSONable {
     }
 
     /**
-     * @return JSONableArray
+     * @return array
      */
     public function getData() {
-        return $this->data;
+        return $this->arrayFrom($this->data);
     }
 
     /**
-     * @param JSONableArray $data
+     * @param array $data
      */
     public function setData($data) {
-        $this->data = $data;
+        $this->data = (new JSONableArray())->ofClass(Feed::class)->setArray($data);
     }
 }

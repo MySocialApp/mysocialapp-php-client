@@ -51,16 +51,16 @@ class RideDirection extends Base {
     }
 
     /**
-     * @return JSONableArray
+     * @return array
      */
     public function getLocations() {
-        return $this->locations;
+        return $this->arrayFrom($this->locations);
     }
 
     /**
-     * @param JSONableArray $locations
+     * @param array $locations
      */
     public function setLocations($locations) {
-        $this->locations = $locations;
+        $this->locations = (new JSONableArray())->ofClass(RideLocation::class)->setArray($locations);
     }
 }

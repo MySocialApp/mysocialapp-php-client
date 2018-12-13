@@ -52,10 +52,7 @@ class LikeBlob extends JSONable {
      * @return array
      */
     public function getSamples() {
-        if ($this->samples !== null) {
-            return $this->samples->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->samples);
     }
 
     /**

@@ -136,10 +136,7 @@ class Ride extends BaseCustomField {
      * @return array
      */
     public function getUsers() {
-        if ($this->users !== null) {
-            return $this->users->getArray();
-        }
-        return $this->users;
+        return $this->arrayFrom($this->users);
     }
 
     /**
@@ -153,10 +150,7 @@ class Ride extends BaseCustomField {
      * @return array
      */
     public function getLocations() {
-        if ($this->locations !== null) {
-            return $this->locations->getArray();
-        }
-        return $this->locations;
+        return $this->arrayFrom($this->locations);
     }
 
     /**

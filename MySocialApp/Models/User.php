@@ -286,10 +286,7 @@ class User extends Base {
      * @return array
      */
     public function getCommonFriends() {
-        if ($this->common_friends !== null) {
-            return $this->common_friends->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->common_friends);
     }
 
     /**
@@ -415,10 +412,7 @@ class User extends Base {
      * @return array
      */
     public function getAuthorities() {
-        if ($this->authorities !== null) {
-            return $this->authorities->getArray();
-        }
-        return null;
+        return $this->arrayFrom($this->authorities);
     }
 
     /**

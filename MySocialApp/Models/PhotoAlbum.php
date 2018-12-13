@@ -40,10 +40,7 @@ class PhotoAlbum extends Base {
      * @return array
      */
     public function getPhotos() {
-        if ($this->photos !== null) {
-            return $this->photos->getArray();
-        }
-        return $this->photos;
+        return $this->arrayFrom($this->photos);
     }
 
     /**
