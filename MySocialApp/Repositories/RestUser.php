@@ -163,7 +163,19 @@ class RestUser extends RestBase {
      * @param $id
      * @return JSONableArray|Error
      */
-    public function listFollowers($id) {
-        return $this->restRequest(RestBase::_GET, "/user/".$id."/follower", null, JSONableArray::classOf(User::class));
+    public function listFollowing($page, $size, $id) {
+        return $this->restRequest(RestBase::_GET,
+            $this->url("/user/".$id."/following", array("page"=>$page,"size"=>$size)),
+            null, JSONableArray::classOf(User::class));
+    }
+
+    /**
+     * @param $id
+     * @return JSONableArray|Error
+     */
+    public function listFollower($page, $size, $id) {
+        return $this->restRequest(RestBase::_GET,
+            $this->url("/user/".$id."/follower", array("page"=>$page,"size"=>$size)),
+            null, JSONableArray::classOf(User::class));
     }
 }

@@ -855,9 +855,116 @@ class User extends BaseCustomField {
     }
 
     /**
+     * @param $page
+     * @param $to
+     * @param int $offset
      * @return array|Error
      */
-    public function getFollowers() {
-        return $this->arrayFrom($this->_session->getClientService()->getUser()->listFollowers($this->getSafeId()));
+    private function _streamFollowing($page, $to, $offset = 0) {
+        if ($offset >= User::_PAGE_SIZE) {
+            return $this->_streamFollowing($page + 1, $to, $offset - User::_PAGE_SIZE);
+        }
+        $size = min(User::_PAGE_SIZE, $to - ($page * User::_PAGE_SIZE));
+        if ($size > 0) {
+            $e = $this->_session->getClientService()->getUser()->listFollowing($this->getSafeId(), $page, $size);
+            if ($e instanceof JSONableArray) {
+                $a = array_slice($e->getArray(), $offset);
+                if (count($e->getArray()) < User::_PAGE_SIZE) {
+                    return $a;
+                } else {
+                    $a2 = $this->_streamFollowing($page + 1, $to);
+                    if (is_array($a2)) {
+                        return array_merge($a, $a2);
+                    } else {
+                        return $a;
+                    }
+                }
+            } else {
+                return $e;
+            }
+        }
+        return array();
+    }
+
+    /**
+     * @param int $limit
+     * @return array|Error
+     */
+    public function streamFollowing($limit) {
+        return $this->listFollowing(0, $limit);
+    }
+
+    /**
+     * @param int $page
+     * @param int $size
+     * @return array|Error
+     */
+    public function listFollowing($page = 0, $size = 10) {
+        $to = ($page+1) * $size;
+        if ($size > User::_PAGE_SIZE) {
+            $offset = $page*$size;
+            $page = $offset / User::_PAGE_SIZE;
+            $offset -= $page * User::_PAGE_SIZE;
+            return $this->_streamFollowing($page, $to, $offset);
+        } else {
+            return $this->_streamFollowing($page, $to);
+        }
+    }
+
+    /**
+     * @param $page
+     * @param $to
+     * @param int $offset
+     * @return array|Error
+     */
+    private function _streamFollower($page, $to, $offset = 0) {
+        if ($offset >= User::_PAGE_SIZE) {
+            return $this->_streamFollower($page + 1, $to, $offset - User::_PAGE_SIZE);
+        }
+        $size = min(User::_PAGE_SIZE, $to - ($page * User::_PAGE_SIZE));
+        if ($size > 0) {
+            $e = $this->_session->getClientService()->getUser()->listFollower($this->getSafeId(), $page, $size);
+            if ($e instanceof JSONableArray) {
+                $a = array_slice($e->getArray(), $offset);
+                if (count($e->getArray()) < User::_PAGE_SIZE) {
+                    return $a;
+                } else {
+                    $a2 = $this->_streamFollower($page + 1, $to);
+                    if (is_array($a2)) {
+                        return array_merge($a, $a2);
+                    } else {
+                        return $a;
+                    }
+                }
+            } else {
+                return $e;
+            }
+        }
+        return array();
+    }
+
+    /**
+     * @param int $limit
+     * @return array|Error
+     */
+    public function streamFollower($limit) {
+        return $this->listFollower(0, $limit);
+    }
+
+    /**
+     * @param int $page
+     * @param int $size
+     * @return array|Error
+     */
+    public function listFollower($page = 0, $size = 10) {
+        $to = ($page+1) * $size;
+        if ($size > User::_PAGE_SIZE) {
+            $offset = $page*$size;
+            $page = $offset / User::_PAGE_SIZE;
+            $offset -= $page * User::_PAGE_SIZE;
+            return $this->_streamFollower($page, $to, $offset);
+        } else {
+            return $this->_streamFollower($page, $to);
+        }
     }
 }
