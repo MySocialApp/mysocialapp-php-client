@@ -21,6 +21,16 @@ class BaseLocation extends Base {
     protected $accuracy;
 
     /**
+     * BaseLocation constructor.
+     * @param double $latitude
+     * @param double $longitude
+     */
+    public function __construct($latitude, $longitude) {
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+    }
+
+    /**
      * @return float
      */
     public function getLatitude() {

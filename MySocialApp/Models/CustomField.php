@@ -7,6 +7,18 @@ namespace MySocialApp\Models;
  * @package MySocialApp\Models
  */
 class CustomField extends Base {
+    const _INPUT_TEXT = "INPUT_TEXT";
+    const _INPUT_TEXTAREA = "INPUT_TEXTAREA";
+    const _INPUT_NUMBER = "INPUT_NUMBER";
+    const _INPUT_BOOLEAN = "INPUT_BOOLEAN";
+    const _INPUT_DATE = "INPUT_DATE";
+    const _INPUT_URL = "INPUT_URL";
+    const _INPUT_EMAIL = "INPUT_EMAIL";
+    const _INPUT_PHONE = "INPUT_PHONE";
+    const _INPUT_LOCATION = "INPUT_LOCATION";
+    const _INPUT_SELECT = "INPUT_SELECT";
+    const _INPUT_CHECKBOX = "INPUT_CHECKBOX";
+
     /**
      * @var \MySocialApp\Models\Field
      */
@@ -77,62 +89,69 @@ class CustomField extends Base {
      * @return bool|null
      */
     public function getBoolValue() {
-        if (is_bool($this->data->getValue())) {
-            return $this->data->getValue();
+        if (is_bool($this->getData()->getValue())) {
+            return $this->getData()->getValue();
         }
-        return $this->data->getValue();
+        return $this->getData()->getValue();
     }
 
     /**
      * @return \DateTime|null
      */
     public function getDateValue() {
-        if ($this->data->getValue() instanceof \DateTime) {
-            return $this->data->getValue();
+        if ($this->getData()->getValue() instanceof \DateTime) {
+            return $this->getData()->getValue();
         }
-        return $this->data->getValue();
+        return $this->getData()->getValue();
     }
 
     /**
      * @return array|null
      */
     public function getStringValues() {
-        if (is_array($this->data->getValue())) {
-            return $this->data->getValue();
+        if (is_array($this->getData()->getValue())) {
+            return $this->getData()->getValue();
         }
-        return $this->data->getValue();
+        return $this->getData()->getValue();
     }
 
     /**
      * @return string|null
      */
     public function getStringValue() {
-        if (is_string($this->data->getValue())) {
-            return $this->data->getValue();
+        if (is_string($this->getData()->getValue())) {
+            return $this->getData()->getValue();
         }
-        return $this->data->getValue();
+        return $this->getData()->getValue();
     }
 
     /**
      * @return double|null
      */
     public function getDoubleValue() {
-        if (is_double($this->data->getValue())) {
-            return $this->data->getValue();
+        if (is_double($this->getData()->getValue())) {
+            return $this->getData()->getValue();
         }
-        return $this->data->getValue();
+        return $this->getData()->getValue();
     }
 
     /**
      * @return \MySocialApp\Models\Location|null
      */
     public function getLocationValue() {
-        if ($this->data->getValue() instanceof Location) {
-            return $this->data->getValue();
+        if ($this->getData()->getValue() instanceof Location) {
+            return $this->getData()->getValue();
         }
-        if (is_object($this->data->getValue()) || is_array($this->data->getValue())) {
-            return (new Location())->initWith($this->data->getValue());
+        if (is_object($this->getData()->getValue()) || is_array($this->getData()->getValue())) {
+            return (new Location())->initWith($this->getData()->getValue());
         }
-        return $this->data->getValue();
+        return $this->getData()->getValue();
+    }
+
+    /**
+     * @param mixed $value
+     */
+    public function setValue($value) {
+        $this->getData()->setValue($value);
     }
 }

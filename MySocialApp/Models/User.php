@@ -8,7 +8,7 @@ use MySocialApp\Services\Session;
  * Class User
  * @package MySocialApp\Models
  */
-class User extends Base {
+class User extends BaseCustomField {
     const _PAGE_SIZE = 10;
     /**
      * @var string
