@@ -116,7 +116,8 @@ class RestBase {
         $context = stream_context_create($context);
         $url = $this->apiURL().$url;
         if ($this->isDebug()) {
-            echo json_encode(array("method"=>$method, "url"=>$url, "header"=>$header, "content"=>$data), JSON_PRETTY_PRINT).PHP_EOL;
+            $s = json_encode(array("method"=>$method, "url"=>$url, "header"=>$header, "content"=>$data), JSON_PRETTY_PRINT);
+            echo ($s ? $s : json_encode(array("method"=>$method, "url"=>$url, "header"=>$header), JSON_PRETTY_PRINT)).PHP_EOL;
         }
         $c = file_get_contents($url, false, $context);
         if (is_array($http_response_header) && $this->isDebug()) {

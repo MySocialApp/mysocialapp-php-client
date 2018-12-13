@@ -71,8 +71,8 @@ class RestTextWallMessage extends RestBase {
         if ($url = $this->getBaseUrl($target, $profile)) {
             $a = array();
             $url .= "/photo";
-            if ($target instanceof User && $profile === true) {
-                $url = "photo";
+            if ($target instanceof User && $profile === null) {
+                $url = "/photo";
             }
             if ($profile === false) {
                 $url .= "/cover";
