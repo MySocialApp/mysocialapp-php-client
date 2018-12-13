@@ -102,6 +102,14 @@ class User extends BaseCustomField {
      * @var string
      */
     protected $external_id;
+    /**
+     * @var bool
+     */
+    protected $is_following;
+    /**
+     * @var bool
+     */
+    protected $is_follower;
 
     public function __construct($username = null, $email = null, $password = null, $firstName = null) {
         $this->username = $username;
@@ -802,5 +810,54 @@ class User extends BaseCustomField {
                 new AuthenticationToken($login->getUsername(), $login->getAccessToken()));
         }
         return $login;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFollowing() {
+        return $this->is_following;
+    }
+
+    /**
+     * @param bool $is_following
+     */
+    public function setIsFollowing($is_following) {
+        $this->is_following = $is_following;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFollower() {
+        return $this->is_follower;
+    }
+
+    /**
+     * @param bool $is_follower
+     */
+    public function setIsFollower($is_follower) {
+        $this->is_follower = $is_follower;
+    }
+
+    /**
+     * @return Error|null
+     */
+    public function follow() {
+        return $this->_session->getClientService()->getUser()->follow($this->getSafeId());
+    }
+
+    /**
+     * @return Error|null
+     */
+    public function unfollow() {
+        return $this->_session->getClientService()->getUser()->unfollow($this->getSafeId());
+    }
+
+    /**
+     * @return array|Error
+     */
+    public function getFollowers() {
+        return $this->arrayFrom($this->_session->getClientService()->getUser()->listFollowers($this->getSafeId()));
     }
 }

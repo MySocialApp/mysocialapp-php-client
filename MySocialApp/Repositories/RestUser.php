@@ -111,19 +111,59 @@ class RestUser extends RestBase {
         return $this->restRequest(RestBase::_DELETE, "/user/".$user->getSafeId()."/friend", null, null);
     }
 
+    /**
+     * @param $id string|int
+     * @return User|Error
+     */
     public function joinGroup($id) {
         return $this->restRequest(RestBase::_POST, "/group/".$id."/member", null, User::class);
     }
 
+    /**
+     * @param $id string|int
+     * @return null|Error
+     */
     public function unjoinGroup($id) {
         return $this->restRequest(RestBase::_DELETE, "/group/".$id."/member", null, null);
     }
 
+    /**
+     * @param $id string|int
+     * @return User|Error
+     */
     public function joinEvent($id) {
         return $this->restRequest(RestBase::_POST, "/event/".$id."/member", null, User::class);
     }
 
+    /**
+     * @param $id string|int
+     * @return null|Error
+     */
     public function unjoinEvent($id) {
         return $this->restRequest(RestBase::_DELETE, "/event/".$id."/member", null, null);
+    }
+
+    /**
+     * @param $id
+     * @return null|Error
+     */
+    public function follow($id) {
+        return $this->restRequest(RestBase::_POST, "/user/".$id."/following", null, null);
+    }
+
+    /**
+     * @param $id
+     * @return null|Error
+     */
+    public function unfollow($id) {
+        return $this->restRequest(RestBase::_DELETE, "/user/".$id."/following", null, null);
+    }
+
+    /**
+     * @param $id
+     * @return JSONableArray|Error
+     */
+    public function listFollowers($id) {
+        return $this->restRequest(RestBase::_GET, "/user/".$id."/follower", null, JSONableArray::classOf(User::class));
     }
 }
