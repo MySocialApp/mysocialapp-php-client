@@ -43,4 +43,18 @@ class TextWallMessage extends Base {
     public function setTagEntities($tag_entities) {
         $this->tag_entities = $tag_entities;
     }
+
+    /**
+     * @return Error|null
+     */
+    public function delete() {
+        return $this->_session->getClientService()->getTextWallMessage()->delete($this);
+    }
+
+    /**
+     * @return Photo|Error
+     */
+    public function save() {
+        return $this->_session->getClientService()->getTextWallMessage()->update($this);
+    }
 }
