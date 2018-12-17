@@ -23,6 +23,10 @@ class FeedPostBuilder {
      * @var mixed
      */
     private $mPayload;
+    /**
+     * @var string
+     */
+    protected $mExternalId;
 
     /**
      * @param $message string
@@ -60,6 +64,15 @@ class FeedPostBuilder {
         return $this;
     }
 
+    /**
+     * @param string $externalId
+     * @return FeedPostBuilder
+     */
+    public function setExternalId($externalId) {
+        $this->mExternalId = $externalId;
+        return $this;
+    }
+
     public function build() {
         if ($this->mMessage === null && $this->mImage === null) {
             return null;
@@ -68,7 +81,7 @@ class FeedPostBuilder {
         $m->setAccessControl($this->mVisibility);
         $m->setMessage($this->mMessage);
         $m->setPayload($this->mPayload);
+        $m->setExternalId($this->mExternalId);
         return new FeedPost($m, $this->mImage);
-
     }
 }

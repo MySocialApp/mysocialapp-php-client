@@ -23,6 +23,11 @@ class CommentPostBuilder {
     protected $payload;
 
     /**
+     * @var string
+     */
+    protected $externalId;
+
+    /**
      * @param string $message
      * @return CommentPostBuilder
      */
@@ -41,6 +46,15 @@ class CommentPostBuilder {
     }
 
     /**
+     * @param string $externalId
+     * @return CommentPostBuilder
+     */
+    public function setExternalId($externalId) {
+        $this->externalId = $externalId;
+        return $this;
+    }
+
+    /**
      * @return \MySocialApp\Models\CommentPost|Error
      */
     public function build() {
@@ -50,6 +64,7 @@ class CommentPostBuilder {
         $comment = new Comment();
         $comment->setMessage($this->message);
         $comment->setPayload($this->payload);
+        $comment->setExternalId($this->externalId);
         return new CommentPost($comment, $this->image);
     }
 }

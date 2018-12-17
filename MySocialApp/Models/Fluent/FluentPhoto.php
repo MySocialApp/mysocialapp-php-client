@@ -71,9 +71,9 @@ class FluentPhoto {
      * @return array|Error
      */
     public function getList($page = 0, $size = 10) {
-        $to = ($page+1) * $size;
+        $to = ($page + 1) * $size;
         if ($size > FluentPhoto::_PAGE_SIZE) {
-            $offset = $page*$size;
+            $offset = $page * $size;
             $page = $offset / FluentPhoto::_PAGE_SIZE;
             $offset -= $page * FluentPhoto::_PAGE_SIZE;
             return $this->_stream($page, $to, $offset);
@@ -103,7 +103,8 @@ class FluentPhoto {
         $twm->setMessage($photo->getMessage());
         $twm->setTagEntities($photo->getTagEntities());
         $twm->setAccessControl($photo->getAccessControl());
-        $r = $this->_session->getClientService()->getTextWallMessage()->postImage($u, $twm, $photo->getRawContent(), null, $photo->getPayload());
+        $r = $this->_session->getClientService()->getTextWallMessage()->postImage($u, $twm, $photo->getRawContent(), null,
+            $photo->getPayload(), $photo->getExternalId());
         if ($r instanceof Feed) {
             return $r->getObject();
         }

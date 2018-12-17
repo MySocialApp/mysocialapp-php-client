@@ -50,6 +50,10 @@ class RestFeed extends RestBase {
         return $this->restRequest(RestBase::_GET, "/feed/".$id, null, Feed::class);
     }
 
+    public function getByExternalId($externalId) {
+        return $this->restRequest(RestBase::_GET, "/feed/external/".$externalId, null, Feed::class);
+    }
+
     public function consumeDisplay($id, $uid, $deviceId) {
         return $this->restRequest(RestBase::_GET, $this->url("/display/".$id."/consume", array("auth_uid"=>$uid,"device_id"=>$deviceId)), null, null);
     }

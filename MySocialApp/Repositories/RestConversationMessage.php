@@ -57,6 +57,9 @@ class RestConversationMessage extends RestBase {
             if ($payload !== null) {
                 $a[] = new RestMultipartData("payload", null, RestMultipartData::_MULTIPART, $payload);
             }
+            if ($message->getExternalId() !== null && strlen($message->getExternalId()) > 0) {
+                $a[] = new RestMultipartData("external_id", null, RestMultipartData::_MULTIPART, $message->getExternalId());
+            }
             return $this->restRequest(RestBase::_POST, "/conversation/".$conversationId."/message/photo",
                 new RestMultipart($a), Base::class);
         }

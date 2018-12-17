@@ -92,7 +92,8 @@ class PhotoAlbum extends Base {
                 $twm->setTagEntities($photo->getTagEntities());
                 $twm->setAccessControl($photo->getAccessControl());
             }
-            return $this->_session->getClientService()->getTextWallMessage()->postImage($user, $twm, $photo->getRawContent(), null, $photo->getPayload(), $this->name);
+            return $this->_session->getClientService()->getTextWallMessage()->postImage($user, $twm, $photo->getRawContent(), null,
+                $photo->getPayload(), $photo->getExternalId(), $this->name);
         }
         return $user;
     }

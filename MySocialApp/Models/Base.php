@@ -74,8 +74,9 @@ class Base extends JSONable {
 
     protected $payload;
 
-    public function initWith($json, $session = null)
-    {
+    protected $external_id;
+
+    public function initWith($json, $session = null) {
         if (isset($json["type"]) && ($type = $json["type"]) !== null) {
             $type = "\\MySocialApp\\Models\\" . $type;
             if (class_exists($type) && !$this instanceof $type && ($c = new $type()) !== null && $c instanceof JSONable) {
@@ -333,6 +334,20 @@ class Base extends JSONable {
      */
     public function setPayload($payload) {
         $this->payload = $payload;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExternalId() {
+        return $this->external_id;
+    }
+
+    /**
+     * @param mixed $external_id
+     */
+    public function setExternalId($external_id) {
+        $this->external_id = $external_id;
     }
 
     /**

@@ -23,6 +23,10 @@ class PhotoBuilder {
      * @var mixed
      */
     private $payload;
+    /**
+     * @var string
+     */
+    protected $externalId;
 
     /**
      * @param string $message
@@ -61,6 +65,15 @@ class PhotoBuilder {
     }
 
     /**
+     * @param string $externalId
+     * @return PhotoBuilder
+     */
+    public function setExternalId($externalId) {
+        $this->externalId = $externalId;
+        return $this;
+    }
+
+    /**
      * @return Error|Photo
      */
     public function build() {
@@ -72,6 +85,7 @@ class PhotoBuilder {
         $p->setMessage($this->message);
         $p->setAccessControl($this->visibility);
         $p->setPayload($this->payload);
+        $p->setExternalId($this->externalId);
         return $p;
     }
 }

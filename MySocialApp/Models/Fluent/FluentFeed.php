@@ -71,9 +71,9 @@ class FluentFeed {
      * @return array|Error
      */
     public function getList($page = 0, $size = 10) {
-        $to = ($page+1) * $size;
+        $to = ($page + 1) * $size;
         if ($size > FluentFeed::_PAGE_SIZE) {
-            $offset = $page*$size;
+            $offset = $page * $size;
             $page = $offset / FluentFeed::_PAGE_SIZE;
             $offset -= $page * FluentFeed::_PAGE_SIZE;
             return $this->_stream($page, $to, $offset);
@@ -96,6 +96,14 @@ class FluentFeed {
      */
     public function get($id) {
         return $this->_session->getClientService()->getFeed()->get($id);
+    }
+
+    /**
+     * @param $externalId
+     * @return \MySocialApp\Models\Feed|\MySocialApp\Models\Error
+     */
+    public function getByExternalId($externalId) {
+        return $this->_session->getClientService()->getFeed()->getByExternalId($externalId);
     }
 
     /**

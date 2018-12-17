@@ -53,6 +53,11 @@ class Notification extends Base {
     protected $payload;
 
     /**
+     * @var string
+     */
+    protected $external_id;
+
+    /**
      * @return string
      */
     public function getTitle() {
@@ -176,6 +181,20 @@ class Notification extends Base {
      */
     public function setPayload($payload) {
         $this->payload = $payload;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExternalId() {
+        return $this->external_id;
+    }
+
+    /**
+     * @param string $external_id
+     */
+    public function setExternalId($external_id) {
+        $this->external_id = $external_id;
     }
 
     /**

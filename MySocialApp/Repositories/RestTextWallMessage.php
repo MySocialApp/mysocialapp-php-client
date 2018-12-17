@@ -22,25 +22,25 @@ class RestTextWallMessage extends RestBase {
         if ($target instanceof Base && $target->getSafeId() !== null) {
             $id = $target->getSafeId();
             if ($target instanceof Event) {
-                return "/event/".$id;
+                return "/event/" . $id;
             }
             if ($target instanceof Group) {
-                return "/group/".$id.(($profile !== null)?"/profile":"");
+                return "/group/" . $id . (($profile !== null) ? "/profile" : "");
             }
             if ($target instanceof Ride) {
-                return "/ride/".$id;
+                return "/ride/" . $id;
             }
             if ($target instanceof User) {
                 if ($profile !== null) {
                     return "/account/profile";
                 }
-                return "/user/".$id;
+                return "/user/" . $id;
             }
             if ($target instanceof PhotoAlbum) {
-                return "/photo/album/".$id;
+                return "/photo/album/" . $id;
             }
             if ($target instanceof PointOfInterest) {
-                return "/poi/".$id;
+                return "/poi/" . $id;
             }
         }
         return null;
@@ -53,7 +53,7 @@ class RestTextWallMessage extends RestBase {
      */
     public function post($target, $message) {
         if ($url = $this->getBaseUrl($target)) {
-            return parent::restRequest(RestBase::_POST, $url."/wall/message", $message, Base::class);
+            return parent::restRequest(RestBase::_POST, $url . "/wall/message", $message, Base::class);
         }
         return null;
     }
@@ -67,7 +67,7 @@ class RestTextWallMessage extends RestBase {
      * @param string $album
      * @return \MySocialApp\Models\Base|null
      */
-    public function postImage($target, $message, $image, $profile = null, $payload = null, $album = "mes photos") {
+    public function postImage($target, $message, $image, $profile = null, $payload = null, $externalId = null, $album = "mes photos") {
         if ($url = $this->getBaseUrl($target, $profile)) {
             $a = array();
             $url .= "/photo";
@@ -93,6 +93,9 @@ class RestTextWallMessage extends RestBase {
             if ($payload !== null) {
                 $a[] = new RestMultipartData("payload", null, RestMultipartData::_MULTIPART, $payload);
             }
+            if ($externalId !== null) {
+                $a[] = new RestMultipartData("external_id", null, RestMultipartData::_MULTIPART, $externalId);
+            }
             return $this->restRequest(RestBase::_POST, $url, new RestMultipart($a), Base::class);
         }
         return null;
@@ -103,7 +106,7 @@ class RestTextWallMessage extends RestBase {
      * @return \MySocialApp\Models\Base|Error
      */
     public function update($textWallMessage) {
-        return $this->restRequest(RestBase::_PUT, "/user/0/message/".$textWallMessage->getSafeId(), $textWallMessage, Base::class);
+        return $this->restRequest(RestBase::_PUT, "/user/0/message/" . $textWallMessage->getSafeId(), $textWallMessage, Base::class);
     }
 
     /**
@@ -111,6 +114,6 @@ class RestTextWallMessage extends RestBase {
      * @return null|Error
      */
     public function delete($textWallMessage) {
-        return $this->restRequest(RestBase::_DELETE, "/user/0/message/".$textWallMessage->getSafeId(), $textWallMessage, null);
+        return $this->restRequest(RestBase::_DELETE, "/user/0/message/" . $textWallMessage->getSafeId(), $textWallMessage, null);
     }
 }

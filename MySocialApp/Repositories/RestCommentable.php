@@ -74,6 +74,9 @@ class RestCommentable extends RestBase {
                 if ($payload !== null) {
                     $data[] = new RestMultipartData("payload", null, RestMultipartData::_MULTIPART, $payload);
                 }
+                if ($comment !== null && $comment->getExternalId() !== null && strlen($comment->getExternalId()) > 0) {
+                    $data[] = new RestMultipartData("external_id", null, RestMultipartData::_MULTIPART, $comment->getExternalId());
+                }
                 return $this->restRequest("POST", $url, new RestMultipart($data), Comment::class);
             } else if ($comment !== null) {
                 if ($comment->getSafeId() !== null) {
