@@ -73,7 +73,9 @@ class Base extends JSONable {
     protected $comments;
 
     protected $payload;
-
+    /**
+     * @var string
+     */
     protected $external_id;
 
     public function initWith($json, $session = null) {
@@ -337,14 +339,14 @@ class Base extends JSONable {
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getExternalId() {
         return $this->external_id;
     }
 
     /**
-     * @param mixed $external_id
+     * @param string $external_id
      */
     public function setExternalId($external_id) {
         $this->external_id = $external_id;

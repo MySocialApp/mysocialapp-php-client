@@ -48,16 +48,6 @@ class Notification extends Base {
     protected $force_notification_sound;
 
     /**
-     * @var \MySocialApp\Models\Base
-     */
-    protected $payload;
-
-    /**
-     * @var string
-     */
-    protected $external_id;
-
-    /**
      * @return string
      */
     public function getTitle() {
@@ -167,34 +157,6 @@ class Notification extends Base {
      */
     public function setForceNotificationSound($force_notification_sound) {
         $this->force_notification_sound = $force_notification_sound;
-    }
-
-    /**
-     * @return Base
-     */
-    public function getPayload() {
-        return $this->payload;
-    }
-
-    /**
-     * @param Base $payload
-     */
-    public function setPayload($payload) {
-        $this->payload = $payload;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExternalId() {
-        return $this->external_id;
-    }
-
-    /**
-     * @param string $external_id
-     */
-    public function setExternalId($external_id) {
-        $this->external_id = $external_id;
     }
 
     /**

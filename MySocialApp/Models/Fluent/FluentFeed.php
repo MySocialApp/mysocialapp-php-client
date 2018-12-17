@@ -99,7 +99,7 @@ class FluentFeed {
     }
 
     /**
-     * @param $externalId
+     * @param $externalId string
      * @return \MySocialApp\Models\Feed|\MySocialApp\Models\Error
      */
     public function getByExternalId($externalId) {
