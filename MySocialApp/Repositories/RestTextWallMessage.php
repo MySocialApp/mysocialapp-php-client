@@ -106,7 +106,7 @@ class RestTextWallMessage extends RestBase {
      * @return \MySocialApp\Models\Base|Error
      */
     public function update($textWallMessage) {
-        return $this->restRequest(RestBase::_PUT, "/user/0/message/" . $textWallMessage->getSafeId(), $textWallMessage, Base::class);
+        return $this->restRequest(RestBase::_PUT, "/user/0/wall/message/" . $textWallMessage->getSafeId(), $textWallMessage, Base::class);
     }
 
     /**
@@ -114,6 +114,6 @@ class RestTextWallMessage extends RestBase {
      * @return null|Error
      */
     public function delete($textWallMessage) {
-        return $this->restRequest(RestBase::_DELETE, "/user/0/message/" . $textWallMessage->getSafeId(), $textWallMessage, null);
+        return $this->restRequest(RestBase::_DELETE, "/user/0/wall/message/" . $textWallMessage->getSafeId(), $textWallMessage, null);
     }
 }

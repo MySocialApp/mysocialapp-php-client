@@ -78,7 +78,7 @@ class MySocialApp {
      * @return Session|Error
      */
     public function createAccount($email, $password, $firstName = null) {
-        $user = new User($email, $password, $firstName);
+        $user = new User($email, $email, $password, $firstName);
         if (($user = $this->getAccount()->create($user)) && $user instanceof User) {
             return $this->connect($email, $password);
         }
