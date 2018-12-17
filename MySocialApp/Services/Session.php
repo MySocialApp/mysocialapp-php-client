@@ -7,6 +7,7 @@ use MySocialApp\Models\Fluent\FluentAccount;
 use MySocialApp\Models\Fluent\FluentConversation;
 use MySocialApp\Models\Fluent\FluentEvent;
 use MySocialApp\Models\Fluent\FluentFeed;
+use MySocialApp\Models\Fluent\FluentFollow;
 use MySocialApp\Models\Fluent\FluentFriend;
 use MySocialApp\Models\Fluent\FluentPhoto;
 use MySocialApp\Models\Fluent\FluentUser;
@@ -146,6 +147,18 @@ class Session {
      */
     public function getUser() {
         return $this->user ?: ($this->user = new FluentUser($this));
+    }
+
+    /**
+     * @var FluentFollow
+     */
+    protected $follow;
+
+    /**
+     * @return FluentFollow
+     */
+    public function getFollow() {
+        return $this->follow ?: ($this->follow = new FluentFollow($this));
     }
 
     /**
