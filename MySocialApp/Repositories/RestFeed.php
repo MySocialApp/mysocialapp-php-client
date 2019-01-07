@@ -63,7 +63,7 @@ class RestFeed extends RestBase {
     }
 
     public function delete($id) {
-        return $this->restRequest(RestBase::_DELETE, "/rider/0/wall/message/".$id, null, null);
+        return $this->restRequest(RestBase::_DELETE, "/feed/".$id, null, null);
     }
 
     public function postForGroup($id, $image, $forCover) {

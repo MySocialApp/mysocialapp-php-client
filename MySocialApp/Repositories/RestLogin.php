@@ -46,6 +46,6 @@ class RestLogin extends RestBase {
      * @return null|Error
      */
     public function deleteAccount($login) {
-        return $this->restRequest(RestBase::_DELETE, "/account", $login, null);
+        return $this->restRequest(RestBase::_DELETE, "/account", null, null);
     }
 }
