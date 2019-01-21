@@ -967,4 +967,8 @@ class User extends BaseCustomField {
             return $this->_streamFollower($page, $to);
         }
     }
+
+    public function changePassword($oldPassword, $newPassword) {
+        $this->_session->getClientService()->getLogin()->changePassword($this->email, $oldPassword, $newPassword);
+    }
 }

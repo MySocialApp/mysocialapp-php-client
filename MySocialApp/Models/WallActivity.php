@@ -150,4 +150,18 @@ class WallActivity extends Base {
         }
         return parent::getBodyMessage();
     }
+
+    /**
+     * @return int
+     */
+    public function getId() {
+        return $this->getObject()->getId();
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdStr() {
+        return $this->getObject()->getIdStr();
+    }
 }

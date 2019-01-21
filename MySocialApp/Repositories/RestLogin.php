@@ -2,8 +2,11 @@
 
 namespace MySocialApp\Repositories;
 
+use MySocialApp\Models\AuthenticationToken;
 use MySocialApp\Models\Error;
 use MySocialApp\Models\Login;
+use MySocialApp\Models\User;
+use MySocialApp\Services\Session;
 
 /**
  * Class RestLogin
@@ -47,5 +50,23 @@ class RestLogin extends RestBase {
      */
     public function deleteAccount($login) {
         return $this->restRequest(RestBase::_DELETE, "/account", null, null);
+    }
+
+    /**
+     * @param $email string
+     * @param $oldPassword string
+     * @param $newPassword string
+     * @return Error|\MySocialApp\Models\User
+     */
+    public function changePassword($email, $oldPassword, $newPassword) {
+        if (($login = $this->login(new Login($email, $oldPassword))) && $login instanceof Login) {
+            $session = new Session($this->session->getConfiguration(), $this->session->getClientConfiguration(), new AuthenticationToken($login->getUsername(), $login->getAccessToken()));
+            $user = new User();
+            $user->setPassword($newPassword);
+            $user = $this->restRequest(RestBase::_POST, "/reset/password", $user, User::class);
+            $session->disconnect();
+            return $user;
+        }
+        return new Error("Wrong credentials");
     }
 }
