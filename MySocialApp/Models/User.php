@@ -968,7 +968,33 @@ class User extends BaseCustomField {
         }
     }
 
+    /**
+     * @param string $oldPassword
+     * @param string $newPassword
+     * @return User|Error
+     */
     public function changePassword($oldPassword, $newPassword) {
-        $this->_session->getClientService()->getLogin()->changePassword($this->email, $oldPassword, $newPassword);
+        if (($login = $this->_session->getClientService()->getLogin()->login(new Login($this->getEmail(), $oldPassword))) && $login instanceof Login) {
+            $session = new Session($this->_session->getConfiguration(), $this->_session->getClientConfiguration(), new AuthenticationToken($login->getUsername(), $login->getAccessToken()));
+            $u = $session->getClientService()->getLogin()->changePassword($newPassword);
+            $session->disconnect();
+            return $u;
+        }
+        return $login;
+    }
+
+    /**
+     * @param string $oldPassword
+     * @param string $newPassword
+     * @return User|Error
+     */
+    public function changePasswordAsAdmin($newPassword) {
+        if (($login = $this->_session->getClientService()->getLogin()->loginAs($this->getSafeId())) && $login instanceof Login) {
+            $session = new Session($this->_session->getConfiguration(), $this->_session->getClientConfiguration(), new AuthenticationToken($login->getUsername(), $login->getAccessToken()));
+            $u = $session->getClientService()->getLogin()->changePassword($newPassword);
+            $session->disconnect();
+            return $u;
+        }
+        return $login;
     }
 }

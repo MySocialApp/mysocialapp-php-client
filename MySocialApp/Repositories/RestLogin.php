@@ -58,15 +58,9 @@ class RestLogin extends RestBase {
      * @param $newPassword string
      * @return Error|\MySocialApp\Models\User
      */
-    public function changePassword($email, $oldPassword, $newPassword) {
-        if (($login = $this->login(new Login($email, $oldPassword))) && $login instanceof Login) {
-            $session = new Session($this->session->getConfiguration(), $this->session->getClientConfiguration(), new AuthenticationToken($login->getUsername(), $login->getAccessToken()));
-            $user = new User();
-            $user->setPassword($newPassword);
-            $user = $this->restRequest(RestBase::_POST, "/reset/password", $user, User::class);
-            $session->disconnect();
-            return $user;
-        }
-        return new Error("Wrong credentials");
+    public function changePassword($newPassword) {
+        $user = new User();
+        $user->setPassword($newPassword);
+        return $this->restRequest(RestBase::_POST, "/reset/password", $user, User::class);
     }
 }
