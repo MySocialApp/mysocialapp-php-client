@@ -424,7 +424,7 @@ class Base extends JSONable {
      */
     public function sendWallPost($feedPost) {
         if ($feedPost->getPhoto() !== null) {
-            return $this->_session->getClientService()->getTextWallMessage()->postImage($this, $feedPost->getTextWallMessage(), $feedPost->getPhoto(), null, $feedPost->getTextWallMessage()->getPayload());
+            return $this->_session->getClientService()->getTextWallMessage()->postImage($this, $feedPost->getTextWallMessage(), $feedPost->getPhoto(), null, $feedPost->getTextWallMessage()->getPayload(), $feedPost->getTextWallMessage()->getExternalId());
         }
         return $this->_session->getClientService()->getTextWallMessage()->post($this, $feedPost->getTextWallMessage());
     }
