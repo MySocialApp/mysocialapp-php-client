@@ -45,7 +45,7 @@ class RestPhoto extends RestBase {
     }
 
     private function postPhotoFor($image, $prefix, $cover, $tagEntities, $payload, $externalId) {
-        $url = $prefix . ($cover ? "/cover" : "") . "photo";
+        $url = $prefix . ($cover ? "/cover/" : "/") . "photo";
         $a = array(new RestMultipartData("file", "image", RestMultipartData::_JPEG, $image));
         if ($tagEntities !== null) {
             $a[] = new RestMultipartData("tag_entities", null, RestMultipartData::_MULTIPART, $tagEntities);
