@@ -10,10 +10,14 @@ use MySocialApp\Models\JSONableArray;
  * @package MySocialApp\Repositories
  */
 class RestFeed extends RestBase {
-    public function getList($page, $size, $parameters = array()) {
+    public function getList($page, $size, $parameters = array(), $algorithm = null) {
         $parameters["page"] = $page;
         $parameters["size"] = $size;
-        return $this->restRequest(RestBase::_GET, $this->url("/feed", $parameters), null, JSONableArray::classOf(Feed::class));
+        if ($algorithm == null) {
+            return $this->restRequest(RestBase::_GET, $this->url("/feed", $parameters), null, JSONableArray::classOf(Feed::class));
+        } else {
+            return $this->restRequest(RestBase::_POST, $this->url("/feed", $parameters), $algorithm, JSONableArray::classOf(Feed::class));
+        }
     }
 
     public function listPublic($page, $size, $parameters = array()) {

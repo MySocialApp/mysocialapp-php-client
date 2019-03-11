@@ -28,22 +28,23 @@ class FluentFeed {
     /**
      * @param $page
      * @param $to
+     * @param object $algorithm
      * @param int $offset
      * @return array|Error
      */
-    private function _stream($page, $to, $offset = 0) {
+    private function _stream($page, $to, $algorithm, $offset = 0) {
         if ($offset >= FluentFeed::_PAGE_SIZE) {
-            return $this->_stream($page + 1, $to, $offset - FluentFeed::_PAGE_SIZE);
+            return $this->_stream($page + 1, $to, $algorithm, $offset - FluentFeed::_PAGE_SIZE);
         }
         $size = min(FluentFeed::_PAGE_SIZE, $to - ($page * FluentFeed::_PAGE_SIZE));
         if ($size > 0) {
-            $e = $this->_session->getClientService()->getFeed()->getList($page, $size);
+            $e = $this->_session->getClientService()->getFeed()->getList($page, $size, array(), $algorithm);
             if ($e instanceof JSONableArray) {
                 $a = array_slice($e->getArray(), $offset);
                 if (count($e->getArray()) < FluentFeed::_PAGE_SIZE) {
                     return $a;
                 } else {
-                    $a2 = $this->_stream($page + 1, $to);
+                    $a2 = $this->_stream($page + 1, $to, $algorithm);
                     if (is_array($a2)) {
                         return array_merge($a, $a2);
                     } else {
@@ -59,26 +60,28 @@ class FluentFeed {
 
     /**
      * @param int $limit
+     * @param object $algorithm
      * @return array|Error
      */
-    public function stream($limit) {
-        return $this->getList(0, $limit);
+    public function stream($limit, $algorithm = null) {
+        return $this->getList(0, $limit, $algorithm);
     }
 
     /**
      * @param int $page
      * @param int $size
+     * @param object $algorithm
      * @return array|Error
      */
-    public function getList($page = 0, $size = 10) {
+    public function getList($page = 0, $size = 10, $algorithm = null) {
         $to = ($page + 1) * $size;
         if ($size > FluentFeed::_PAGE_SIZE) {
             $offset = $page * $size;
             $page = $offset / FluentFeed::_PAGE_SIZE;
             $offset -= $page * FluentFeed::_PAGE_SIZE;
-            return $this->_stream($page, $to, $offset);
+            return $this->_stream($page, $to, $algorithm, $offset);
         } else {
-            return $this->_stream($page, $to);
+            return $this->_stream($page, $to, $algorithm);
         }
     }
 
