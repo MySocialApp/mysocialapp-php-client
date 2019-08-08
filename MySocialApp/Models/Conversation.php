@@ -20,6 +20,11 @@ class Conversation extends Base {
     protected $members;
 
     /**
+     * @var bool
+     */
+    protected $silent;
+
+    /**
      * @return string
      */
     public function getName() {
@@ -63,6 +68,10 @@ class Conversation extends Base {
      */
     public function setMembers($members) {
         $this->members = JSONableArray::createWith($members, Member::class, $this->_session);
+    }
+
+    public function isSilent() {
+        return $this->silent;
     }
 
     /**
@@ -128,5 +137,15 @@ class Conversation extends Base {
      */
     public function quit() {
         return $this->delete();
+    }
+
+    /**
+     * @param $silent bool
+     * @return \MySocialApp\Models\Conversation|Error
+     */
+    public function makeSilent($silent) {
+        if (($id = $this->getSafeId()) !== null) {
+            return $this->_session->getClientService()->getConversation()->silent($id, $silent);
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace MySocialApp\Repositories;
 
 use MySocialApp\Models\Conversation;
+use MySocialApp\Models\Error;
 use MySocialApp\Models\JSONableArray;
 
 /**
@@ -42,5 +43,13 @@ class RestConversation extends RestBase {
 
     public function delete($id) {
         return $this->restRequest(RestBase::_DELETE, "/conversation/".$id, null, null);
+    }
+
+    public function silent($id, $enabled) {
+        if ($enabled) {
+            return $this->restRequest(RestBase::_POST, "/conversation/".$id."/silent", null, Conversation::class);
+        } else {
+            return $this->restRequest(RestBase::_DELETE, "/conversation/".$id."/silent", null, null);
+        }
     }
 }
